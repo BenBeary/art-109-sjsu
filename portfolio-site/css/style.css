@@ -1,0 +1,114 @@
+
+/* Palette
+
+Midnight Blue   |   #145da0
+Dark Blue       |   #0c2d48
+Blue            |   #2e8bc0
+Blue Gray       |   #90ADC6
+Pewter (White)  |   #E9EAEC
+Old Gold        |   #d5b741
+*/
+html {
+    box-sizing: border-box;
+}
+*, *:before, *a:after {
+    box-sizing: inherit;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background: #E9EAEC;
+    margin: 0;
+}
+a {
+    color: #145da0;
+}
+a:hover{
+    color: #d5b741;
+    text-decoration: none;
+}
+
+.btn {
+    background: #90ADC6;
+    color:  #E9EAEC;
+    text-decoration: none;
+    padding: 5px;
+}
+
+.content-wrapper {
+    margin: 0 auto;
+    padding: 30px;
+    max-width: 900px;
+}
+
+/* Home
+----------------------------------------- */
+.home {
+    background: url(../images/BannerImage.jpg) no-repeat;
+    background-size: cover;
+}
+.home .content-wrapper {
+    background: rgb(255 255 255 / 0.95);
+}
+
+/* Resume
+----------------------------------------- */
+.resume header::before {
+    background: url(../images/BannerImage.jpg) center;
+    background-size: cover;
+    content: "";
+    display: block;
+    height: 375px;
+}
+.resume header {
+    background:#90ADC6;
+    color: #0c2d48;
+}
+
+/* Profile
+----------------------------------------- */
+
+
+/* Projects
+----------------------------------------- */
+
+
+/* Work Experience
+----------------------------------------- */
+
+
+/* Education
+----------------------------------------- */
+
+
+/* Footer
+----------------------------------------- */
+footer {
+    background: #0c2d48
+}
+footer p {
+    color: #E9EAEC;
+}
+footer a {
+    color: #d5b741;
+    text-decoration: none;
+}
+footer a:hover {
+    color: #90ADC6;
+}
+
+.socials { 
+    list-style-type: none;
+    color: #E9EAEC;
+    margin: 0px;
+    margin-left: -20px;
+}
+.socials li {
+    display: inline-block;
+}
+.socials img { 
+    width: 64px;
+}
