@@ -82,7 +82,7 @@ a:hover{
 /* Home
 ----------------------------------------- */
 .home {
-    background: url(../images/BannerImage.jpg) no-repeat;
+    background: url(../images/Banner.png) no-repeat;
     background-size: cover;
     display: flex;
     flex-direction: column;
@@ -107,7 +107,7 @@ a:hover{
 /* Resume
 ----------------------------------------- */
 .resume header::before {
-    background: url(../images/BannerImage.jpg) center;
+    background: url(../images/Banner.png) center;
     background-size: cover;
     content: "";
     display: block;
