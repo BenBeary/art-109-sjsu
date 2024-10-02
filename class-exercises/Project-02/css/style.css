@@ -1,0 +1,32 @@
+
+
+
+
+body {
+    display: flex;
+    background-color: black;
+    color: chartreuse;
+}
+
+.strong-tilt-move-shake {
+    animation: tilt-n-move-shaking 0.15s infinite, fade-out 2s linear;
+  }
+
+@keyframes tilt-n-move-shaking {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(5px, 5px) rotate(5deg); }
+  50% { transform: translate(0, 0) rotate(0eg); }
+  75% { transform: translate(-5px, 5px) rotate(-5deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes fade-out {
+    
+    0% {
+        opacity: 1;
+    }
+    100% {
+        transition: opacity 3s;
+        opacity: 0;
+    }
+}
