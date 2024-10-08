@@ -3,9 +3,11 @@
 
 
 body {
-    display: flex;
+    display: flow-root;
     background-color: black;
     color: chartreuse;
+    margin: 0 auto;
+    text-align: center;
 }
 
 .strong-tilt-move-shake {
