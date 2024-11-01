@@ -1,9 +1,10 @@
 document.addEventListener("DOMContentLoaded", function() {
 
-    const projectItems = document.querySelectorAll(".project-item");
+    const rightProjectItems = document.querySelectorAll(".project-item-right");
+    const leftProjectItems = document.querySelectorAll(".project-item-left");
 
     function checkSlide() {
-        projectItems.forEach((projectItem) => {
+        rightProjectItems.forEach((projectItem) => {
 
             const slideInAt = window.scrollY + window.innerHeight - projectItem.clientHeight/2;
 
@@ -19,6 +20,22 @@ document.addEventListener("DOMContentLoaded", function() {
                 projectItem.classList.remove("slide-in")
             }
 
+        })
+        leftProjectItems.forEach((projectItem) => {
+            
+            const slideInAt = window.scrollY + window.innerHeight - projectItem.clientHeight/2;
+
+            const itemBottom = projectItem.offsetTop + projectItem.clientHeight;
+
+            const isHalfShown = slideInAt > projectItem.offsetTop;
+            const isNotScrolledPast = window.scrollY < itemBottom;
+
+
+            if(isHalfShown && isNotScrolledPast){
+                projectItem.classList.add("slide-in")
+            } else {
+                projectItem.classList.remove("slide-in")
+            }
         })
     }
 

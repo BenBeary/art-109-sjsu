@@ -1,0 +1,22 @@
+body {
+    margin: 0;
+}
+
+
+canvas { 
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+main {
+    position: absolute;
+    color: white;
+}
+
+#scene-container {
+    background-color: black;
+    width: 100vw;
+    height: 100hw;
+    margin: 0 auto;
+}

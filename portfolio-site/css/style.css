@@ -108,10 +108,14 @@ a:hover{
 ----------------------------------------- */
 
 nav {
-    padding: 10px 20px;
+    padding: 15px 30px;
     background:  #0c2d48;
     text-align: right;
     display:  block;
+    position: fixed;
+    top: 0;
+    right: 0px;
+    border-radius: 0 0 0 15px;
 }
 
 nav a {
@@ -156,6 +160,10 @@ nav a:hover {
     .download-link{
         position: absolute;
     }
+    nav {
+        position: absolute;
+        padding: 10px 15px;
+    }
 }
 
 @media screen and (max-width:500px) {
@@ -173,33 +181,52 @@ nav a:hover {
 /* Projects
 ----------------------------------------- */
 
-.project-item {
+.project-item-right {
     transform: translateX(-250px);
     opacity: 0;
     transition: opacity 1s, transform 1s;
     margin:  30px 0;
 }
 
-.project-item.slide-in {
+.project-item-left {
+    transform: translateX(250px);
+    opacity: 0;
+    transition: opacity 1s, transform 1s;
+    margin:  30px 0;
+}
+
+.project-item-right.slide-in, .project-item-left.slide-in {
     opacity: 1;
     transform: translateX(0);
 }
 
-.project-item img {
+.project-item-right img, .project-item-left img {
     width: 300px;
 }
 
+
+
 @media screen and (min-width:650px) and (min-width:860px) {
-    .project-item {
+
+    .project-item-right {
         transform: translateX(-250px);
         opacity: 0;
         transition: opacity 1s, transform 1s;
         display: flow-root;
     }
-    .project-item img {
+
+    .project-item-left {
+        transform: translateX(250px);
+        opacity: 0;
+        transition: opacity 1s, transform 1s;
+        display: flow-root;
+    }
+
+    .project-item-right img,  .project-item-left img {
         float: left;
         margin-right:  20px;
     }
+    
 }
 @media screen and (max-width:859px) {
     .project-wrapper {
@@ -207,7 +234,7 @@ nav a:hover {
         grid-template-columns: repeat(2,1fr);
         column-gap: 20px;
     }
-    .project-item img {
+    .project-item-right img, .project-item-left img {
         width: 100%;
     }
 }
@@ -216,7 +243,7 @@ nav a:hover {
     .project-wrapper {
         grid-template-columns: repeat(1,1fr);
     }
-    .project-item img {
+    .project-item-right img, .project-item-left img {
         width:100%;
         margin-bottom: 10px;
     }

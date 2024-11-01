@@ -79,6 +79,17 @@ a:hover{
     max-width: 900px;
 }
 
+/* THREE JS
+----------------------------------------- */
+#three-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+
+
 /* Home
 ----------------------------------------- */
 .home {
@@ -124,6 +135,14 @@ a:hover{
     border-bottom: 2px dashed #2e8bc0;
 }
 
+.resume p {
+    color: #E9EAEC;
+}
+
+.resume-section h2,h3 {
+    color: #90ADC6;
+}
+
 .download-link {
     position: fixed;
     top: 5px;
@@ -153,6 +172,7 @@ a:hover{
 ----------------------------------------- */
 
 .project-item {
+    background: #90ADC6;
     transform: translateX(-250px);
     opacity: 0;
     transition: opacity 1s, transform 1s;

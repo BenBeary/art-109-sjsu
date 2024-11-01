@@ -10,11 +10,24 @@
     href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Lilita+One&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/addons/p5.sound.min.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.162.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.162.0/examples/jsm/"
+      }
+    }
+  </script>
   <script src="js/main.js"></script>
+  <script type="module" src="js/3DBackground.js"></script>
   <title>Resume - Ben Beary - Portfolio</title>
 </head>
 
 <body class="resume">
+  <div id="three-container"></div>
+
   <a class="btn download-link" href="#">Download Blank</a>
   <!-- //  INTRO  // -->
   <header>
@@ -24,7 +37,9 @@
     </div>
   </header>
 
+
   <main class="content-wrapper">
+    
     <!-- //  PROFILE  // -->
     <section>
       <a href="index.html">Back to homepage</a>
@@ -87,7 +102,7 @@
             alt="Picture of a tower defence game still being worked on" width="80%" height="auto">
           <h3>Port Lochne (Modded Map)</h3>
           <p><strong>4/22/2022</strong> | This map was created in the hammer editor used for the source engine of the game Garry's Mod. 
-             The map is used for the game mode "Trouble In Terrorist Town." The map design is of a city cargo station made entirely from 
+            The map is used for the game mode "Trouble In Terrorist Town." The map design is of a city cargo station made entirely from 
             scratch. I did not make any of the textures or complex props. </p>
           <!-- link to project -->
           <a class="btn" href="https://steamcommunity.com/sharedfiles/filedetails/?id=2798393616" target="_blank">Steam
