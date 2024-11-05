@@ -108,14 +108,23 @@ a:hover{
 ----------------------------------------- */
 
 nav {
-    padding: 15px 30px;
+    /* padding: 15px 30px; */
     background:  #0c2d48;
-    text-align: right;
-    display:  block;
+    justify-content: flex-end;
+    display: block;
     position: fixed;
     top: 0;
     right: 0px;
     border-radius: 0 0 0 15px;
+    padding: 10px;
+    z-index: 99;
+}
+
+nav ul {
+    list-style: none;
+    align-items: center;
+    display:  flex;
+    margin: 0;
 }
 
 nav a {
@@ -125,8 +134,47 @@ nav a {
     padding-right: 10px;
 }
 
-nav a:hover {
+nav a:hover, .sidebar a:hover {
     color: #d5b741;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 250px;
+    z-index: 100;
+    background-color: white;
+    box-shadow: -10px 0 10px rgba(0, 0, 0, 0.1);
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: center;
+}
+.sidebar li:first-child{
+    text-align: left;
+}
+.sidebar li {
+    padding: 10px 0 ;
+    width: 100%;
+}
+.sidebar a {
+    width: 100%;
+    color: #0c2d48;
+}
+
+
+@media(max-width: 800px){
+    .hideOnMobile {
+        display: none;
+    }
+}
+@media(max-width: 400px){
+    .sidebar {
+        width: 100%;
+    }
 }
 
 /* Resume
@@ -159,10 +207,6 @@ nav a:hover {
 @media screen and (max-width:1200px) {
     .download-link{
         position: absolute;
-    }
-    nav {
-        position: absolute;
-        padding: 10px 15px;
     }
 }
 
