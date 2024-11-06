@@ -81,12 +81,20 @@ a:hover{
 
 /* Home
 ----------------------------------------- */
-.home {
+.home{
     background: url(../images/Banner.png) no-repeat;
     background-size: cover;
     display: flex;
     flex-direction: column;
 }
+
+.cv {
+    background: url(../images/Banner.png) repeat;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+}
+
 .home .content-wrapper {
     flex: 1 0  auto;
 }
@@ -114,7 +122,7 @@ nav {
     display: block;
     position: fixed;
     top: 0;
-    right: 0px;
+    right: 0;
     border-radius: 0 0 0 15px;
     padding: 10px;
     z-index: 99;
@@ -125,16 +133,17 @@ nav ul {
     align-items: center;
     display:  flex;
     margin: 0;
+    padding: 0;
 }
 
 nav a {
     text-shadow: #0c2d48;
     color: #E9EAEC;
     text-decoration: none;
-    padding-right: 10px;
+    padding: 10px;
 }
 
-nav a:hover, .sidebar a:hover {
+nav a:hover {
     color: #d5b741;
 }
 
@@ -160,11 +169,19 @@ nav a:hover, .sidebar a:hover {
     padding: 10px 0 ;
     width: 100%;
 }
-.sidebar a {
+.sidebar li a {
     width: 100%;
     color: #0c2d48;
 }
+.sidebar a:hover {
+    color: #d5b741;
+}
 
+@media(min-width: 801px) {
+    .hideOnComputer {
+        display: none;
+    }
+}
 
 @media(max-width: 800px){
     .hideOnMobile {
@@ -237,6 +254,7 @@ nav a:hover, .sidebar a:hover {
     opacity: 0;
     transition: opacity 1s, transform 1s;
     margin:  30px 0;
+    overflow: hidden;
 }
 
 .project-item-right.slide-in, .project-item-left.slide-in {
@@ -246,6 +264,7 @@ nav a:hover, .sidebar a:hover {
 
 .project-item-right img, .project-item-left img {
     width: 300px;
+    overflow: hidden;
 }
 
 
@@ -264,11 +283,13 @@ nav a:hover, .sidebar a:hover {
         opacity: 0;
         transition: opacity 1s, transform 1s;
         display: flow-root;
+        overflow: hidden;
     }
 
     .project-item-right img,  .project-item-left img {
         float: left;
         margin-right:  20px;
+        overflow: hidden;
     }
     
 }
@@ -280,6 +301,7 @@ nav a:hover, .sidebar a:hover {
     }
     .project-item-right img, .project-item-left img {
         width: 100%;
+        overflow: hidden;
     }
 }
 
@@ -290,6 +312,7 @@ nav a:hover, .sidebar a:hover {
     .project-item-right img, .project-item-left img {
         width:100%;
         margin-bottom: 10px;
+        overflow: hidden;
     }
 }
 
