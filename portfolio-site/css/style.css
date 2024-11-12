@@ -82,10 +82,18 @@ a:hover{
 /* Home
 ----------------------------------------- */
 .home{
-    background: url(../images/Banner.png) no-repeat;
     background-size: cover;
     display: flex;
     flex-direction: column;
+    justify-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.home .content-bg  {
+    background: none;
+    color: #E9EAEC;
+    
 }
 
 .cv {
@@ -97,12 +105,19 @@ a:hover{
 
 .home .content-wrapper {
     flex: 1 0  auto;
+    justify-content: center;
 }
 .content-bg {
     background: rgb(255 255 255 / 0.95);
     padding: 30px;
 }
 
+#three-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
 @media screen and (max-width:650px) {
     .home .content-wrapper {
         padding: 10px;
@@ -209,6 +224,7 @@ nav a:hover {
 }
 .resume-section {
     margin-bottom: 50px;
+    overflow: hidden;
 }
 .resume-section h2 {
     border-bottom: 2px dashed #2e8bc0;
@@ -254,7 +270,6 @@ nav a:hover {
     opacity: 0;
     transition: opacity 1s, transform 1s;
     margin:  30px 0;
-    overflow: hidden;
 }
 
 .project-item-right.slide-in, .project-item-left.slide-in {
@@ -264,7 +279,6 @@ nav a:hover {
 
 .project-item-right img, .project-item-left img {
     width: 300px;
-    overflow: hidden;
 }
 
 
@@ -283,13 +297,11 @@ nav a:hover {
         opacity: 0;
         transition: opacity 1s, transform 1s;
         display: flow-root;
-        overflow: hidden;
     }
 
     .project-item-right img,  .project-item-left img {
         float: left;
         margin-right:  20px;
-        overflow: hidden;
     }
     
 }
@@ -298,21 +310,21 @@ nav a:hover {
         display: grid;
         grid-template-columns: repeat(2,1fr);
         column-gap: 20px;
+        overflow: hidden;
     }
     .project-item-right img, .project-item-left img {
         width: 100%;
-        overflow: hidden;
     }
 }
 
 @media screen and (max-width:500px) {
     .project-wrapper {
         grid-template-columns: repeat(1,1fr);
+        overflow: hidden;
     }
     .project-item-right img, .project-item-left img {
         width:100%;
         margin-bottom: 10px;
-        overflow: hidden;
     }
 }
 

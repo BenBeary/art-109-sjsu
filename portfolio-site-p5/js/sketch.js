@@ -118,40 +118,13 @@ function animate(){
     requestAnimationFrame(animate);
 
     const elapsedTime = clock.getElapsedTime();
-
-    // let scrollY = window.scrollY / document.body.scrollHeight *100;
-    // cube.position.x = scrollY * .25; 
-    // cube.position.y = -scrollY * .25;
-    // cubeTwo.position.x = scrollY * .25; 
-    // cubeTwo.position.y = -scrollY * .25;
+    particlesMesh.rotation.y = -mouseY * (elapsedTime * 0.0001)
+    particlesMesh.rotation.x = -mouseX * (elapsedTime * 0.0001)
     
-
     cube.rotation.x = Math.sin(Date.now() / 5000) * 4 - 2;
     cube.rotation.y = Math.sin(Date.now() / 3000) * 4 - 2;
     cube.rotation.z = Math.sin(Date.now() / 4000) * 4 - 2;
 
-    particlesMesh.rotation.y = -mouseY * (elapsedTime * 0.0001)
-    particlesMesh.rotation.x = -mouseX * (elapsedTime * 0.0001)
-
-
-
-
-    // cubeTwo.rotation.y = Math.sin(Date.now() / 3000) * 4 - 2;
-    // cubeTwo.rotation.x = Math.sin(Date.now() / 5000) * 4 - 2;
-    // cubeTwo.rotation.z = Math.sin(Date.now() / 4000) * 4 - 2;
-
-
-
-    // if(SpaceShip){
-
-    //     SpaceShip.position.x = Math.sin(Date.now() / 5000) * 4;
-    //     SpaceShip.position.y = Math.sin(Date.now() / 3000) * 4;
-    //     SpaceShip.position.z = Math.sin(Date.now() / 4000) * 4;
-    //     // SpaceShip.rotation.x = Math.sin(Date.now() / 5000) * -2;
-    //     // SpaceShip.rotation.y = Math.sin(Date.now() / 3000) * -2;
-    //     // SpaceShip.rotation.z = Math.sin(Date.now() / 4000) * -2;
-    //     mixer.update(clock.getDelta());
-    // }
 
     renderer.render(scene,camera);
 }
