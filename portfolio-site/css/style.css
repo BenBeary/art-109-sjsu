@@ -27,7 +27,7 @@ body {
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
-
+    
     font-size: 1.5rem;
     line-height: 1.4;
 }
@@ -96,11 +96,18 @@ a:hover{
     
 }
 
+.home a {
+    color: #E9EAEC;
+}
+.home a:hover {
+    color: #d5b741;
+}
 .cv {
     background: url(../images/Banner.png) repeat;
     background-size: cover;
     display: flex;
     flex-direction: column;
+    
 }
 
 .home .content-wrapper {
@@ -141,6 +148,7 @@ nav {
     border-radius: 0 0 0 15px;
     padding: 10px;
     z-index: 99;
+    font-size: 2rem;
 }
 
 nav ul {
