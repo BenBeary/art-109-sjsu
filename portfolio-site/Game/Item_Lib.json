@@ -100,6 +100,16 @@
             "bulletText": "()=>Err",
             "objCol": [ 120, 200, 250 ],
             "bulCol": [ 200, 200, 150 ]
+        },
+        {
+            "name": "Cat",
+            "damage": 3,
+            "range": 4,
+            "shootSpeed": 1,
+            "cost": 3,
+            "bulletText": "mew",
+            "objCol": [ 100, 255, 100 ],
+            "bulCol": [ 250, 100, 250 ]
         }
     ]
 

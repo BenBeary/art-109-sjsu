@@ -5,6 +5,8 @@ let ConsoleSection = 200;
 let mouseDown = false;
 let lastMousePos;
 let errorName = [];
+let screenSizeChange = false;
+let canvasSize;
 
 function Intro() {
 
@@ -21,23 +23,29 @@ function Intro() {
       textSize(75);
       textAlign(CENTER,CENTER);
       textStyle(BOLD)
-      text("File/Debugger.exe", width/2,200)
+      text("Password Protector", width/2,200)
 
       fill(150,150,255);
       textStyle(NORMAL)
       textSize(22)
       push()
+        let currentName = "Play Game"
+        let lineW = textWidth(currentName)/2;
         translate(0,-50)
-        text("/Next/Page/Game_Play.exe",width/2,400)
+        text(currentName,width/2,400)
         stroke(150,150,255)
-        line(width/2-140,410,width/2+140,410)
+        line(width/2-lineW,410,width/2+lineW,410)
         noStroke()
-        text("../Info/Page/Instructions.txt",width/2,450)
+        currentName = "Instructions"
+        lineW = textWidth(currentName)/2;
+        text(currentName,width/2,450)
         stroke(150,150,255)
-        line(width/2-140,460,width/2+130,460)
+        line(width/2-lineW,460,width/2+lineW,460)
       pop()
-    
-      if(inButton(width/2-150,330,280,30)){ // GAME BUTTON
+
+      currentName = "Play Game"
+      lineW = textWidth(currentName)/2;
+      if(inButton(width/2-lineW,330,lineW*2,30)){ // GAME BUTTON
         if(!mouseDown){
           sceneMan.showScene(Game);
           mouseDown = true;
@@ -46,7 +54,9 @@ function Intro() {
           }
         }
       }
-      if(inButton(width/2-150,380,280,30)){
+      currentName = "Instructions"
+      lineW = textWidth(currentName)/2;
+      if(inButton(width/2-lineW,380,lineW*2,30)){
         if(!mouseDown){
           sceneMan.showScene(Instructions)
           mouseDown = true;
@@ -80,6 +90,7 @@ window.addEventListener('resize', onWindowResize, false);
 function onWindowResize(){
     canvasSize = resizeCanvas(window.innerWidth, window.innerHeight);
     console.log("Canvas Resized");
+    screenSizeChange = true;
 }
 
 function Game(){
@@ -120,13 +131,19 @@ function Game(){
   let gridSize;
   let size = 50;
 
-  let canvasSize;
+
   let counter = 0;
   let healthcounter = 5;
   // Scroll Bars
   let shopScrollBar;
   
-  
+  function updateWindow(){
+    let availableSpace = (window.innerHeight - TopSection) / mapData.length;
+    if(window.innerWidth-ShopSection-ConsoleSection < window.innerHeight-TopSection){
+      availableSpace = (window.innerWidth - ShopSection-ConsoleSection) / mapData.length;
+    }
+    size = availableSpace
+  }
   //#endregion
   
   this.setup = function() {
@@ -138,12 +155,8 @@ function Game(){
     lastMousePos = createVector(mouseX,mouseY);
     shopScrollBar = new vertScrollBar(width-35,TopSection+30,30,440)
     
-    let availableSpace = (window.innerHeight - TopSection - 50) / mapData.length;
-    if(window.innerWidth-ShopSection-ConsoleSection < window.innerHeight-TopSection-50){
-      availableSpace = (window.innerWidth - ShopSection-ConsoleSection) / mapData.length;
-    }
-    size = availableSpace
-
+  
+    updateWindow();
 
     sec = second();
   
@@ -177,7 +190,10 @@ function Game(){
   
   this.draw = function() {
     background(0)
-    
+    if(screenSizeChange){
+      screenSizeChange = false;
+      updateWindow();
+    }
     waveManager();
   
     for(let y = 0; y < gridSize.y; y++){
@@ -803,10 +819,12 @@ function Instructions() {
       fill(150,150,255);
       textStyle(NORMAL)
       textSize(22) 
-      text("/next/Project/StartPage.js.zip",50,400)
+      let buttonText = "Return Home";
+      let buttonSize = textWidth(buttonText)/2;
+      text(buttonText,50,400)
       stroke(150,150,255)
-      line(50,410,335,410)
-      if(inButton(50,380,335-50,30, true)){
+      line(50,410,buttonSize*2 + 50,410)
+      if(inButton(50,380,buttonSize*2,30)){
         if(!mouseDown){
           sceneMan.showScene(Intro)
           mouseDown = true;
@@ -931,7 +949,7 @@ function WinEnd(){
   let counter = 0;
 
   this.setup = function(){
-    canvasSize = createCanvas(window.innerWidth, window.innerHeights)
+    canvasSize = createCanvas(window.innerWidth, window.innerHeight)
     iconPos = createVector(width-200,0)
     target1 = createVector(width-200,0)
     target2 = createVector(width-200,height)
