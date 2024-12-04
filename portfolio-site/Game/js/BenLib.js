@@ -57,13 +57,13 @@ function dynamicText(text,Xborder){
 
 // You are weak, my son is Invincible - Omni Man
 // x1 y1 = positions | x2 y2 = size
-function inButton(x1, y1, x2, y2){
+function inButton(x, y, w, h){
 
 
-  x2 += x1;
-  y2 += y1;
-    if (mouseIsPressed && mouseX >= x1 && mouseX <= x2 &&
-    mouseY >= y1 && mouseY <= y2){
+  w += x;
+  h += y;
+    if (mouseIsPressed && mouseX >= x && mouseX <= w &&
+    mouseY >= y && mouseY <= h){
       return true;
     }
     return false;
@@ -97,7 +97,11 @@ function inButton(x1, y1, x2, y2){
       this.reduceSize = 0; // amount the bar can move
       this.division = 1; // changes movement distance if at min size;
     }
-  
+    
+    UpdateBounds(x,y,w,h){
+      this.upBounds = createVector(x,y);
+      this.downBounds = createVector(w,h);
+    }
   
     Render(){
       push()
@@ -108,7 +112,6 @@ function inButton(x1, y1, x2, y2){
         rect(0,0,this.downBounds.x,this.downBounds.y);
   
         push()
-          fill(200)
           let scrollerLength = this.downBounds.y - this.reduceSize;
           
           // does not move to show the rest of the items being scrolled
@@ -119,6 +122,8 @@ function inButton(x1, y1, x2, y2){
           }
   
           // Scroller
+          fill(200)
+          if(scrollerLength == this.downBounds.y) { fill(200,200,200,50) } // grey out when nothing to do
           rect(3,this.pos,this.downBounds.x-6,scrollerLength,10);
           
           // Scroller detail
@@ -148,6 +153,9 @@ function inButton(x1, y1, x2, y2){
       // rect(this.upBounds.x,this.upBounds.y+this.pos,this.downBounds.x,scrollerLength)
     }
   
+    
+    
+    // Returns the relative position
     getValue(){
       return this.pos*this.division
     }

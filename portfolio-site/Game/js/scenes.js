@@ -8,13 +8,115 @@ let errorName = [];
 let screenSizeChange = false;
 let canvasSize;
 
-function Intro() {
+// Game Variables 
 
+let gameIsPlaying = false;
+let playerPasswordInput = null; // position updated in Game.updateWindow()
+let playerPassword = "";
+let errorTags = [];
+let PasswordStrength = 0; // base health;
+let minHealth = 4;
+//#region Window Resizing
+window.addEventListener('resize', onWindowResize, false);
+function onWindowResize(){
+    canvasSize = resizeCanvas(window.innerWidth, window.innerHeight);
+    console.log("Canvas Resized");
+    screenSizeChange = true;
+}
+//#endregion
+
+
+
+function keyPressed(){
+  
+  if(!gameIsPlaying){
+    console.log("stopped here")
+    return;
+  }
+  if (keyCode === ENTER && playerPassword.length == 0){
+    let temp = playerPasswordInput.value();
+
+    PasswordChecker(temp);
+  }
+}
+
+function PasswordChecker(item){
+  //#region Error Stoppers
+  errorTags = [];
+  let badChars = ",.<>/:;'\"[]}{=+()\\|"
+  let goodChars = "-_`~!@#$%^&*"
+  
+  if(item.length < 4){
+    errorTags.push("Password too short")
+  }
+  else if(item.length > 12){
+    errorTags.push("Password too long")
+  }
+  
+  if(item.indexOf(' ') > 0){
+    errorTags.push("Has Spaces")
+  }
+  
+  
+  //#endregion
+  
+  //#region health System
+  PasswordStrength = 0
+  let repeatingChars = 0;
+
+  for(let i = 0; i < item.length; i++){
+
+    // check if same letters
+    if(i > 0 && item.charAt(i-1) == item.charAt(i)){
+      PasswordStrength -= repeatingChars;
+      repeatingChars++;
+    }
+    else {
+      repeatingChars = 0;
+    }
+    // check if char is a number
+    if(!isNaN(parseInt(item.charAt(i),10))){ 
+      PasswordStrength ++;
+    }
+    // check if char is a special char
+    if(badChars.includes(item.charAt(i))){
+      errorTags.push("illegal Char")
+      break;
+    }
+    else if(goodChars.includes(item.charAt(i))){
+      PasswordStrength++;
+    }
+
+    // add 1 for each char
+    PasswordStrength++;
+  }
+
+  
+  if(errorTags.length > 0){
+    errorTags.unshift("Error:")
+    console.log(errorTags);
+  }
+  else {
+    playerPassword = item;
+    if(PasswordStrength < minHealth) PasswordStrength = minHealth;
+    console.log("Password Set: " + playerPassword);
+    console.log("Password Strength: " + PasswordStrength);
+    playerPasswordInput.hide();
+    playerPasswordInput = null;
+  }
+}
+
+
+
+function Intro() {
+  
   let counter = 0;
 
   this.setup = function(){
+    gameIsPlaying = false;
     createCanvas(window.innerWidth,window.innerHeight)
   }
+
 
   this.draw = function() {
     push()
@@ -85,16 +187,14 @@ function Intro() {
 
 }
 
-window.addEventListener('resize', onWindowResize, false);
 
-function onWindowResize(){
-    canvasSize = resizeCanvas(window.innerWidth, window.innerHeight);
-    console.log("Canvas Resized");
-    screenSizeChange = true;
-}
 
 function Game(){
+
   
+
+
+
   //#region VARIABLES
   let mapData = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
@@ -136,6 +236,14 @@ function Game(){
   let healthcounter = 5;
   // Scroll Bars
   let shopScrollBar;
+
+
+  //#region Password Creator Variables (Moved to global Variables)
+
+
+
+
+  //#endregion
   
   function updateWindow(){
     let availableSpace = (window.innerHeight - TopSection) / mapData.length;
@@ -143,19 +251,40 @@ function Game(){
       availableSpace = (window.innerWidth - ShopSection-ConsoleSection) / mapData.length;
     }
     size = availableSpace
+
+
+
+    shopScrollBar.UpdateBounds(width-35,TopSection+30,30,height-TopSection-60);
+    if(playerPasswordInput != null) playerPasswordInput.position(width/2 - playerPasswordInput.width/2,height/2-75);
   }
-  //#endregion
-  
+
+
   this.setup = function() {
+    gameIsPlaying = true;
+    playerPassword = "";
+
     canvasSize = createCanvas(window.innerWidth,window.innerHeight)
     textAlign(CENTER, CENTER);
     ellipseMode(CENTER)
     textSize(14)
     textStyle(BOLD);
     lastMousePos = createVector(mouseX,mouseY);
-    shopScrollBar = new vertScrollBar(width-35,TopSection+30,30,440)
+    shopScrollBar = new vertScrollBar(width-35,TopSection+30,30,height-TopSection-60)
     
-  
+    //#region Password Creator Setup #####################
+
+    playerPasswordInput = createInput("Set Password Here");
+    playerPasswordInput.position(width/2 - playerPasswordInput.width/2,height/2-75);
+    playerPasswordInput.style("width",300);
+    playerPasswordInput.style("height",30)
+    playerPasswordInput.style("font-size",20)
+    playerPasswordInput.style("color",color(255,255,255))
+    playerPasswordInput.style("background-color", color(15,15,20 ))
+    playerPasswordInput.style("outline-style", "solid")
+    playerPasswordInput.style("outline-color", color(50,50,60 ))
+
+    //#endregion
+
     updateWindow();
 
     sec = second();
@@ -194,44 +323,96 @@ function Game(){
       screenSizeChange = false;
       updateWindow();
     }
-    waveManager();
+    
+    
+    
+    //waveManager();
   
-    for(let y = 0; y < gridSize.y; y++){
-      for(let x = 0; x < gridSize.x; x++){
+    // for(let y = 0; y < gridSize.y; y++){
+    //   for(let x = 0; x < gridSize.x; x++){
         
-        gridData[y][x].Render()
-      }
-    }
+    //     gridData[y][x].Render()
+    //   }
+    // }
     
     
-    currentTowers.forEach(function(item){
-      item.BuildingRender();
-      if(selectedTower != null){
-        item.Building.showRange = true;
-      }
-      else {
-        item.Building.showRange = false;
-      }
-    });
+    // currentTowers.forEach(function(item){
+    //   item.BuildingRender();
+    //   if(selectedTower != null){
+    //     item.Building.showRange = true;
+    //   }
+    //   else {
+    //     item.Building.showRange = false;
+    //   }
+    // });
   
     
     
   
-    if(selectedTower != null){
-      selectedTower.pos = createVector(mouseX,mouseY)
-      selectedTower.Render();
-    }
-    
+    // if(selectedTower != null){
+    //   selectedTower.pos = createVector(mouseX,mouseY)
+    //   selectedTower.Render();
+    // }
+
     drawShopPanel();
     drawTopPanel();
-    drawConsolePanel();
+    //drawConsolePanel();
     shopScrollBar.Render()
-    
+    if(playerPassword.length == 0) { drawPasswordStart(); }
+    else { drawNewGameShit() }
+
+
     if(!mouseDown){
       lastMousePos = createVector(mouseX,mouseY);
     }
   }
   
+  /* Color Values
+  * 15,15,20    |   Black Blue    | Game Background?
+  * 25,25,35    |   Dark Blue     | Console Background
+  * 30,30,40    |   Navy Blue    *| BASE COLOR
+  * 50,50,60    |   Dark Grey     | Shop bg
+  * 90,90,95    |   Grey          | Button Highlight
+  * 240,200,90  |   Yellow        | Text Color
+  * 
+  * 
+  */
+
+
+  function drawPasswordStart(){
+    push()
+      push()
+        fill(0,0,0,230)
+        rect(0,0,width,height); // darken screen
+      pop()
+      rectMode(CENTER)
+      fill(30,30,40)
+      rect(width/2,height/2, playerPasswordInput.width + 25) // bg square
+      textAlign(CENTER, CENTER)
+      fill(240,200,90)
+      textSize(dynamicText("Set your Password to Begin",playerPasswordInput.width))
+      text("Set your Password to Begin",width/2,height/2 - playerPasswordInput.width/2 + 25)
+      text("(4 - 12 Characters)",width/2,height/2 - playerPasswordInput.width/2 + 50)
+      pop()
+      
+
+      if(errorTags.length == 0) {return;}
+      let spaceBetween = 0;
+      let padding = 10;
+      for(let i = 0; i < errorTags.length; i++){
+        textSize(dynamicText("Set your Password to Begin",playerPasswordInput.width)) // shit doesnt carry over to for loops rip
+        fill(240,200,90)
+        text(errorTags[i],width/2, height/2 - playerPasswordInput.width/2 + 125 + spaceBetween)
+        spaceBetween += 25 + padding;
+      }
+    
+  }
+
+  function drawNewGameShit(){
+      let gameArea = createVector(width - ShopSection, height - TopSection)
+  }
+
+
   function drawTopPanel(){
     push()
     fill(25,25,35)
@@ -281,6 +462,8 @@ function Game(){
   
     let itemSize = 140;
     let padding = 10;
+    let maxAmountItemsOnScreen = Math.floor((height-TopSection-50) / (itemSize+padding))
+    
     for(let i = 0; i < _itemLib.Towers.length; i++){
       if(_itemLib.Towers.length > 3){ // only use this if we have more than 3 items
         // hide stuff outside shop
@@ -313,8 +496,8 @@ function Game(){
       text("Cost: " + _itemLib.Towers[i].cost,itemSize/2,(itemSize+padding)*i+itemSize-15 - shopScrollBar.getValue())
       pop()
     }
-    if(_itemLib.Towers.length > 3){
-      shopScrollBar.reduceSize = ((_itemLib.Towers.length-3)*itemSize+padding*(_itemLib.Towers.length-3))
+    if(_itemLib.Towers.length > maxAmountItemsOnScreen){
+      shopScrollBar.reduceSize = ((_itemLib.Towers.length-maxAmountItemsOnScreen)*itemSize+padding*(_itemLib.Towers.length- maxAmountItemsOnScreen))
       // console.log(shopScrollBar.reduceSize)
     }
     else { shopScrollBar.reduceSize = 0;}
@@ -469,7 +652,7 @@ function Game(){
   
     switch(waveCur){
       case -1:
-        console.log("Game Not Started");
+        //console.log("Game Not Started");
         return;
       case waveData[0].count.length:
         console.log("waves Complete");
@@ -785,6 +968,7 @@ function Game(){
 function Instructions() {
   this.setup = function(){
     canvasSize = createCanvas(window.innerWidth, window.innerHeight)
+    gameIsPlaying = false;
 
   }
   
@@ -841,7 +1025,6 @@ function Instructions() {
 
 
 function FailedEnd() {
-
   let iconPos;
   let target1;
   let target2;
@@ -852,6 +1035,7 @@ function FailedEnd() {
     iconPos = createVector(width-200, height-250)
     target1 = createVector(width-200, 25)
     target2 = createVector(width-200, height-250)
+    gameIsPlaying = false;
   }
 
   this.draw = function(){
@@ -942,7 +1126,6 @@ function FailedEnd() {
 
 
 function WinEnd(){
-
   let iconPos;
   let target1;
   let target2;
@@ -953,6 +1136,7 @@ function WinEnd(){
     iconPos = createVector(width-200,0)
     target1 = createVector(width-200,0)
     target2 = createVector(width-200,height)
+    gameIsPlaying = false;
   }
 
   this.draw = function(){
