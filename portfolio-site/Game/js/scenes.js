@@ -1237,6 +1237,22 @@ function Statement() {
       fill(255,100,100)
       textStyle(NORMAL)
 
+      push()
+
+      fill("white")
+      textAlign(TOP, CENTER)
+      textSize(20)
+      let currentParagraph = "With new forms of artificial intelligence and password-cracking robots, it's become harder and harder to hold on to a secure password that would last all your life. There are around 30% of people on the internet that have at some point been breached due to a weak password. This is why for my project, I wanted to show off the power of having a strong password while also having strong protections to help further secure your passwords and data in the form of a game."
+      text(currentParagraph, width/2, 100, width/3)
+      
+      let lines = ((textWidth(currentParagraph)*20*2) / (width/3)) + 75
+      currentParagraph = "The goal behind this project was to gamify the \“behind-the-scenes\” on how many people try to hack into your password and how certain applications can handle defending it. As the game progresses further, more lines of attack open up to represent the multiple accounts that are linked to that single password. This is mainly used to represent the statistic that two-thirds of Americans use the same password across multiple accounts. Finally, the strength of the password created by the player directly affects the difficulty of the password with longer passwords with different symbols and numbers increasing the overall health the player has to work with."
+      text(currentParagraph,width/2, lines, width/3)  	
+      
+      lines += ((textWidth(currentParagraph)*20) / (width/3)) + 50
+      text("The entire website is built with p5 play JavaScript just to make it \“easier\” to code. To make the process easier to improve on, the enemies, towers, and wave spawner use a JSON file to store their data. This mainly allowed me to quickly add new units and towers to the game without needing to rework different systems in the game.",width/2, lines, width/3)
+
+      pop()
 
       
       push()
