@@ -2,22 +2,22 @@
     "WaveDat": [
         
         {
-            "count": [4,8,10,12,20],
+            "count": [4,8,10,12,20,30,10,15,30,15],
             "delay": 1,
             "curTime": 0
         },
         {
-            "count": [0,3,5,6,7],
+            "count": [0,3,5,6,7,10,25,25,30,40],
             "delay": 2,
             "curTime": 0
         },
         {
-            "count": [0,0,0,1,3],
+            "count": [0,0,0,1,3,5,15, 20, 25, 30],
             "delay": 4,
             "curTime": 0
         },
         {
-            "count": [0,0,0,0,1],
+            "count": [0,0,0,0,1,2,2,3,4,6],
             "delay": 8,
             "curTime": 0
         }
@@ -79,7 +79,7 @@
             "cost": 3,
             "bulletText": "False",
             "objCol": [ 200, 100, 200 ],
-            "bulCol": [ 200, 90, 90 ]
+            "bulCol": [ 200, 10, 100 ]
         },
         {
             "name": "Login Alert",

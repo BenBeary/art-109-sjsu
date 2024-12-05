@@ -42,6 +42,7 @@ function setup(){
   sceneMan.addScene (Instructions);
   sceneMan.addScene (FailedEnd)
   sceneMan.addScene (WinEnd);
+  sceneMan.addScene (Statement);
   sceneMan.showNextScene();
   sceneMan.showScene(Intro)
 }

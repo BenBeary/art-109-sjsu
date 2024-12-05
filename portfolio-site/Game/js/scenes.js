@@ -16,6 +16,7 @@ let playerPassword = "";
 let errorTags = [];
 let PasswordStrength = 0; // base health;
 let minHealth = 4;
+let healthcounter = 5;
 //#region Window Resizing
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize(){
@@ -102,7 +103,7 @@ function PasswordChecker(item){
     console.log("Password Set: " + playerPassword);
     console.log("Password Strength: " + PasswordStrength);
     playerPasswordInput.hide();
-    playerPasswordInput = null;
+    healthcounter = PasswordStrength;
   }
 }
 
@@ -150,6 +151,7 @@ function Intro() {
       if(inButton(width/2-lineW,330,lineW*2,30)){ // GAME BUTTON
         if(!mouseDown){
           sceneMan.showScene(Game);
+          if(playerPasswordInput != null) playerPasswordInput.show();
           mouseDown = true;
           if(!buttonSFX.isPlaying()){
             buttonSFX.play()
@@ -187,7 +189,16 @@ function Intro() {
 
 }
 
-
+  /* Color Values
+  * 15,15,20    |   Black Blue    | Game Background?
+  * 25,25,35    |   Dark Blue     | Console Background
+  * 30,30,40    |   Navy Blue    *| BASE COLOR
+  * 50,50,60    |   Dark Grey     | Shop bg
+  * 90,90,95    |   Grey          | Button Highlight
+  * 240,200,90  |   Yellow        | Text Color
+  * 
+  * 
+  */
 
 function Game(){
 
@@ -196,25 +207,11 @@ function Game(){
 
 
   //#region VARIABLES
-  let mapData = [
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
-    [1, 0, 0, 1, 1, 1, 1, 1, 1, 0, ],
-    [1, 1, 1, 1, 0, 0, 0, 0, 1, 0, ],
-    [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, ],
-    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, ],
-    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, ],
-    [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, ],
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, ],
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, ],
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, ],
-    
-    
-  ]
-  
-  let gridData = []; // 2D Array that stores all the tiles
-  let enemyPathing = []; // Path enemies take
   let pathLength = 0;
   
+  
+  let gameArea = createVector(width - ShopSection, height - TopSection)
+
   let currentEnemies = []; // enemies in play
   let currentTowers = []; // towers in play
   let selectedTower = null; // trying to build
@@ -224,42 +221,46 @@ function Game(){
   let waveCur = -1;
   let waveData = [] // holds JSON data for waves
   
+  let gameStart = false // once start button clicked 
+
   // None interactive Vars
 
   let baseCol;
-  let secCol;
-  let gridSize;
-  let size = 50;
+  let size = 100;
 
 
   let counter = 0;
-  let healthcounter = 5;
+  let threatCounter = 0;
+
   // Scroll Bars
   let shopScrollBar;
 
 
   //#region Password Creator Variables (Moved to global Variables)
 
-
-
-
+  let mapLinePoints = []; // data for pathing enemies (OG idea is to have a winding path)
+  let towerSpawns = createVector(3,5); // range of tower locations the line will spawn
+  let threatLevel = 1; // incrementing over time to the point of impossible difficulty
   //#endregion
   
   function updateWindow(){
-    let availableSpace = (window.innerHeight - TopSection) / mapData.length;
-    if(window.innerWidth-ShopSection-ConsoleSection < window.innerHeight-TopSection){
-      availableSpace = (window.innerWidth - ShopSection-ConsoleSection) / mapData.length;
-    }
-    size = availableSpace
-
 
 
     shopScrollBar.UpdateBounds(width-35,TopSection+30,30,height-TopSection-60);
     if(playerPasswordInput != null) playerPasswordInput.position(width/2 - playerPasswordInput.width/2,height/2-75);
+
+    let pathBuildSize = gameArea.x / 5
+    for(let i = 0; i < mapLinePoints.length; i++){
+
+      mapLinePoints[i].UpdatePath(createVector(pathBuildSize/2 + (pathBuildSize * i), TopSection),gameArea.y-TopSection-size)
+    }
+
+
   }
 
 
   this.setup = function() {
+    gameArea = createVector(width - ShopSection, height - TopSection)
     gameIsPlaying = true;
     playerPassword = "";
 
@@ -273,7 +274,7 @@ function Game(){
     
     //#region Password Creator Setup #####################
 
-    playerPasswordInput = createInput("TEST");
+    playerPasswordInput = createInput("Set Password Here");
     playerPasswordInput.position(width/2 - playerPasswordInput.width/2,height/2-75);
     playerPasswordInput.style("width",300);
     playerPasswordInput.style("height",30)
@@ -293,24 +294,8 @@ function Game(){
     baseCol = color(50,50,60);
     secCol = color(255 - baseCol.r, 255 - baseCol.g, 255 - baseCol.b);
   
-    for(let y = 0; y < gridSize.y; y++){
-        gridData[y] = [];
-        for(let x = 0; x < gridSize.x; x++){
-          
-            switch(mapData[y][x]) {
-              case 0:
-                gridData[y][x] = new TileData(color(80),false,true)
-                gridData[y][x].pos = createVector(size*x+ConsoleSection,size*y+TopSection)    
-                  break;
-              case 1: // Road
-                gridData[y][x] = new TileData(color(50), true)
-                gridData[y][x].pos = createVector(size*x+ConsoleSection,size*y+TopSection)
-                // enemyPathing.push(createVector(size*x+size/2,size*y+size/2))
-                  break;
-            }
-        }
-    }
-    createPath();
+    
+    // createPath();
     // LOADING WAVE DAT
     for(let i = 0; i < _itemLib.WaveDat.length; i++){
       waveData.push({... JSON.parse(JSON.stringify(_itemLib.WaveDat[i]))});
@@ -323,60 +308,52 @@ function Game(){
       screenSizeChange = false;
       updateWindow();
     }
+    gameArea = createVector(width - ShopSection, height - TopSection)
     
     
-    
-    //waveManager();
-  
-    // for(let y = 0; y < gridSize.y; y++){
-    //   for(let x = 0; x < gridSize.x; x++){
-        
-    //     gridData[y][x].Render()
-    //   }
-    // }
-    
-    
-    // currentTowers.forEach(function(item){
-    //   item.BuildingRender();
-    //   if(selectedTower != null){
-    //     item.Building.showRange = true;
-    //   }
-    //   else {
-    //     item.Building.showRange = false;
-    //   }
-    // });
-  
-    
-    
-  
-    // if(selectedTower != null){
-    //   selectedTower.pos = createVector(mouseX,mouseY)
-    //   selectedTower.Render();
-    // }
+    waveManager();
 
+    for(let mapDat of mapLinePoints){
+      mapDat.Render()
+    }
+
+    
+    
+    currentTowers.forEach(function(item){
+      item.BuildingRender();
+      if(selectedTower != null){
+        item.Building.showRange = true;
+      }
+      else {
+        item.Building.showRange = false;
+      }
+    });
+ 
+
+    
+    
+  
+    if(selectedTower != null){
+      selectedTower.pos = createVector(mouseX,mouseY)
+      selectedTower.Render();
+    }
+    if(playerPassword.length > 0) { AddEnemyLines(); }
+    
+    
+    EnemyManager();
     drawShopPanel();
     drawTopPanel();
-    //drawConsolePanel();
     shopScrollBar.Render()
+    if(playerPassword.length > 0) { drawPasswordBoxes(); }
+    
     if(playerPassword.length == 0) { drawPasswordStart(); }
-    else { drawNewGameShit() }
-
 
     if(!mouseDown){
       lastMousePos = createVector(mouseX,mouseY);
     }
   }
   
-  /* Color Values
-  * 15,15,20    |   Black Blue    | Game Background?
-  * 25,25,35    |   Dark Blue     | Console Background
-  * 30,30,40    |   Navy Blue    *| BASE COLOR
-  * 50,50,60    |   Dark Grey     | Shop bg
-  * 90,90,95    |   Grey          | Button Highlight
-  * 240,200,90  |   Yellow        | Text Color
-  * 
-  * 
-  */
+
 
 
   function drawPasswordStart(){
@@ -409,15 +386,25 @@ function Game(){
     
   }
 
-  function drawNewGameShit(){
-      let gameArea = createVector(width - ShopSection, height - TopSection)
+  function AddEnemyLines(){
+    // add new line based on every 5 threatLevels
+    // max of 5 lines? idk probably just hard code
+    if(threatLevel > 20) return;
+    let pathBuildSize = gameArea.x / 5
+    if(Math.floor(threatLevel/5) >= mapLinePoints.length) { // spawn new line
+      console.log("Adding Path " + (mapLinePoints.length+1) + " | Threat Level: " + threatLevel)
+      mapLinePoints.push(new lineData(createVector(pathBuildSize/2 + (pathBuildSize * mapLinePoints.length), TopSection),gameArea.y-TopSection-size))
 
-      drawPasswordBoxes();
+      let amountOfTowers = Math.floor(Math.random() * (towerSpawns.y - towerSpawns.x)) + towerSpawns.x;
+      
+      mapLinePoints[mapLinePoints.length-1].AddTowerSlot(amountOfTowers)
+      
+      pathLength = mapLinePoints[0].endPos.y - mapLinePoints[0].startPos.y
+    }
   }
 
 
   function drawPasswordBoxes(){
-    let gameArea = createVector(width - ShopSection, height - TopSection)
     
     let padding = 10;
     let boxSize = 150 
@@ -472,15 +459,16 @@ function Game(){
     textAlign(LEFT,CENTER)
     translate(0,TopSection/2)
     
-    if(waveCur == -1){
+    if(gameStart == false){
       push()
       fill(50,50,60);
-      rect(width/2 + 100,-TopSection/2, 100,50)
+      rect(width/2 - textWidth("Start"),-TopSection/2, 100,50)
       fill("white")
-      text("Start",width/2 + 120,0);
-      if(inButton(width/2 + 100,0,100,50)){
+      text("Start",width/2- 35,0);
+      if(playerPassword.length > 0 && inButton(width/2- textWidth("Start"),0,100,50)){
         if(!mouseDown){
-          waveCur++
+          gameStart = true
+          waveCur++; 
           for(let item in waveData){
             item.curTime = second()
           }
@@ -494,8 +482,8 @@ function Game(){
 
     text("Money: " + Currency,10,0)
     text("Health: " + healthcounter, 30 + textWidth("Money: 0000"), 0)
+    text("Threat Level: " + Math.floor(threatLevel/5+1), 60 + textWidth("Money: 0000") + textWidth("Health: 00"),0)
     textAlign(CENTER,CENTER)
-    text("File: " + (waveCur+1) + "/" + waveMax,width/2,0)
     text("Shop",width-100,0)
     pop()
   }
@@ -525,7 +513,7 @@ function Game(){
   
       }
       push()
-      if(inButton(width-ShopSection+20,TopSection+30+(itemSize+padding)*i - shopScrollBar.getValue(),itemSize,itemSize)){
+      if(playerPassword.length > 0 && inButton(width-ShopSection+20,TopSection+30+(itemSize+padding)*i - shopScrollBar.getValue(),itemSize,itemSize)){
         if(!mouseDown && _itemLib.Towers[i].cost <= Currency){
           // add functions here
           console.log("Bought Tower");
@@ -566,34 +554,14 @@ function Game(){
   }
   
   // Displays What Enemies are on the board
-  function drawConsolePanel(){
-    push()
-    translate(0,TopSection);
-    fill(30,30,40)
-    rect(0,0,ConsoleSection,height)
-    fill(15,15,20)
-    translate(10,10);
-    rect(0,0, ConsoleSection-20,height-TopSection-20)
-    pop()
+  function EnemyManager(){
+
   
     let row = 0;
-    let extra = 0;
     currentEnemies.forEach(function(obj){
-      push()
-      translate(10,TopSection+10)
-      textAlign(LEFT,LEFT)
-      rectMode(CORNER,CORNER)
-      textSize(20);
-      fill("Red")
-      text("ERR: " + obj.name,10,20+row*24+extra*24,ConsoleSection-20);
-      temp = textWidth("ERR: " + obj.name) 
-      if(temp > ConsoleSection-20){
-        extra++
-      }
-      pop()
+      
   
       if(obj.finishedPath){
-        errorName.push( obj.flavorTxt);
         healthcounter--;
         if(healthcounter == 0){
           ResetScene();
@@ -606,10 +574,15 @@ function Game(){
         currentEnemies.splice(row,1);
         DeathSFX[int(random(0,DeathSFX.length))].play()
         counter++;
+        threatCounter++;
         if(counter == 3){
           Currency++
           counter = 0;
           CoinSFX.play();
+        }
+        if(threatCounter == 4){
+          threatLevel++;
+          threatCounter = 0;
         }
       }
       obj.Render();
@@ -619,84 +592,6 @@ function Game(){
     
     
     
-  }
-  
-  function createPath(){
-  
-    
-    let currentX = 0;
-    let currentY = 0;
-    let lastX = 0;
-    let lastY = 0;
-    // get first spot
-    for(let x= 0; x < gridSize.x; x++){
-      
-      if(gridData[0][x].isRoad){
-        enemyPathing.push(createVector(gridData[0][x].pos.x,gridData[0][x].pos.y))
-        enemyPathing[enemyPathing.length-1].add(size/2,0);
-  
-        currentX = x;
-        break;
-      }
-      
-    }
-  
-    // check bottom > Left > right > top
-  
-    while(currentY <= gridSize.y-2){
-  
-        // Check down 1
-        // cur = 2 last = 0 = true
-        if(currentY+1 != lastY && gridData[currentY+1][currentX].isRoad){
-          enemyPathing.push(createVector(gridData[currentY+1][currentX].pos.x,gridData[currentY+1][currentX].pos.y));
-          enemyPathing[enemyPathing.length-1].add(size/2,size/2);
-          pathLength += size;
-          lastX = currentX;
-          lastY = currentY;
-          currentY++;
-          continue;
-        }
-        // Check Left 1;
-        else if(currentX-1 != -1 && currentX-1 != lastX && gridData[currentY][currentX-1].isRoad){
-          enemyPathing.push(createVector(gridData[currentY][currentX-1].pos.x,gridData[currentY][currentX-1].pos.y));
-          enemyPathing[enemyPathing.length-1].add(size/2,size/2);
-          pathLength += size;
-          lastX = currentX;
-          lastY = currentY;
-          currentX--;
-          continue;
-          
-        }
-        // check Right 1
-        else if(currentX+1 != lastX && gridData[currentY][currentX+1].isRoad){
-  
-          enemyPathing.push(createVector(gridData[currentY][currentX+1].pos.x,gridData[currentY][currentX+1].pos.y));
-          enemyPathing[enemyPathing.length-1].add(size/2,size/2);
-          pathLength += size;
-          lastX = currentX;
-          lastY = currentY;
-          currentX++;
-          continue;
-          
-        }
-        // check up
-        else if(currentY-1 != lastY && gridData[currentY-1][currentX].isRoad){
-          enemyPathing.push(createVector(gridData[currentY-1][currentX].pos.x,gridData[currentY-1][currentX].pos.y));
-          enemyPathing[enemyPathing.length-1].add(size/2,size/2);
-          pathLength += size;
-          lastX = currentX;
-          lastY = currentY;
-          currentY--;
-          continue;
-          
-        }
-        else{
-          console.log("No Items found")
-          console.log(currentX + " | " + currentY);
-          console.log(lastX + " | " + lastY);
-          break;
-        }   
-    }
   }
   
   function waveManager() {
@@ -722,10 +617,14 @@ function Game(){
       if(second() < waveData[i].curTime){
         dif = second() - (waveData[i].curTime-60)
       }
-      if(dif >= waveData[i].delay && waveData[i].count[waveCur] > 0){
+
+      let difficultyScale = waveData[i].delay - (Math.floor(threatLevel/5)/10);
+      if(difficultyScale >= 0.25) difficultyScale = 0.25
+
+      if(dif >= difficultyScale && waveData[i].count[waveCur] > 0){
         
-        currentEnemies.push(new enemy(createVector(enemyPathing[0].x,enemyPathing[0].y),_itemLib.Enemies[i]))
-  
+        let randPath = Math.floor(Math.random() * mapLinePoints.length) 
+        currentEnemies.push(new enemy(mapLinePoints[randPath].startPos,mapLinePoints[randPath].endPos, _itemLib.Enemies[i]))
         waveData[i].count[waveCur]--;
         waveData[i].curTime = second();
       }
@@ -745,13 +644,13 @@ function Game(){
   }
   
   function ResetScene(){
-    
+    playerPasswordInput.unhid
+    playerPassword = ""
     currentEnemies = []; // enemies in play
     currentTowers = []; // towers in play
     selectedTower = null; // trying to build
-    gridData = []; // 2D Array that stores all the tiles
-    enemyPathing = [];
-
+    gameStart = false 
+    
     Currency = 10; // Buying towers
     waveMax = 5; // Waves Left Obv
     waveCur = -1;
@@ -760,41 +659,74 @@ function Game(){
     counter = 0;
     healthcounter = 5;
 
-    for(let y = 0; y < gridSize.y; y++){
-      gridData[y] = [];
-      for(let x = 0; x < gridSize.x; x++){
-        
-          switch(mapData[y][x]) {
-            case 0:
-              gridData[y][x] = new TileData(color(80),false,true)
-              gridData[y][x].pos = createVector(size*x+ConsoleSection,size*y+TopSection)    
-                break;
-            case 1: // Road
-              gridData[y][x] = new TileData(color(50), true)
-              gridData[y][x].pos = createVector(size*x+ConsoleSection,size*y+TopSection)
-              // enemyPathing.push(createVector(size*x+size/2,size*y+size/2))
-                break;
-          }
-      }
-    }
-    createPath();
+
+    mapLinePoints = [];
+    threatLevel = 1;
+
+    // createPath();
     
     for(let i = 0; i < _itemLib.WaveDat.length; i++){
       waveData.push({... JSON.parse(JSON.stringify(_itemLib.WaveDat[i]))});
     }
   }
   
+
+  class lineData { 
+    constructor(startPos, length){
+      this.startPos = startPos
+      this.endPos = createVector(startPos.x,startPos.y + length)
+      this.tileData = [];
+    }
+
+    Render() {
+      push()
+        stroke("red")
+        strokeWeight(10)
+        line(this.startPos.x,this.startPos.y,this.endPos.x,this.endPos.y);
+      pop()
+
+      for(let tile of this.tileData){
+        tile.Render()
+      }
+    }
+
+    AddTowerSlot(amount){
+
+      for(let i = 0; i < amount; i++){
+        this.tileData.push(new TileData(createVector(0,0),color(50,50,60),false,true))
+      }
+
+      let length = this.endPos.y - this.startPos.y 
+      let towerDistances = length / this.tileData.length
+
+      for(let i = 0; i < this.tileData.length; i++){
+        this.tileData[i].UpdatePosition(createVector(this.startPos.x - size - 10, towerDistances * i + size+10));
+      }
+    }
+
+    UpdatePath(newPos, length){
+      this.startPos = newPos
+      this.endPos = createVector(this.startPos.x,this.startPos.y + length)
+
+      let towerDistances = length / this.tileData.length
+
+      for(let i = 0; i < this.tileData.length; i++){
+        this.tileData[i].UpdatePosition(createVector(this.startPos.x - size - 10, towerDistances * i + size+10));
+      }
+    }
+
+  }
+
+
   class enemy {
-    constructor(pos,EnemyDat){
-      this.pos = pos;
-      this.name = EnemyDat.name;
+    constructor(startPos, pathEnd, EnemyDat){
+      this.pos = createVector(startPos.x,startPos.y);
+      this.target = createVector(pathEnd.x,pathEnd.y);
       this.health = EnemyDat.hp;
-      this.flavorTxt = EnemyDat.flavorTxt;
-  
       this.speed = EnemyDat.speed / 10;
       this.color = color(EnemyDat.objCol[0],EnemyDat.objCol[1],EnemyDat.objCol[2]);
-      
-      this.currentSpot = 0;
+      this.maxHealth = this.health;
+    
       this.finishedPath = false;
       this.pathDistanceRemaining = pathLength;
       
@@ -803,41 +735,29 @@ function Game(){
     Render(){
       
       push()
-      //#region PATHING
-      translate(this.pos.x,this.pos.y);
-      
-      if(this.currentSpot < enemyPathing.length-1){
-        this.followPath();
-      }
-      else if(this.pos.y <= height){
-        this.pos.add(0,this.speed);
-      }
-      else {
-        this.finishedPath = true;
-      }
-      //#endregion
+ 
+      // translate(this.pos.x,this.pos.y);
+      this.followPath();
+
       
       
-      //#region DRAWING
+
       fill(this.color);
-      textStyle(BOLD);
-      rectMode(CENTER)
-      textSize(dynamicText(this.name,size*1.4))
-      text(this.name,0,0,size,size)
-      //ellipse(0,0, this.size, this.size)
-      //#endregion
+      ellipseMode(CENTER)
+      ellipse(this.pos.x,this.pos.y, 10 + this.maxHealth*3)
+      
+
       pop()
     }
   
     followPath(){
-      let path = createVector(enemyPathing[this.currentSpot].x,enemyPathing[this.currentSpot].y)
-      
+      //console.log(MoveTowards(this.pos,this.target,this.speed) + " | " + this.pos.y + " / " + this.target.y);
       let prevPos = createVector(this.pos.x,this.pos.y);
-      this.pos.add(MoveTowards(this.pos,path,this.speed));
+      this.pos.add(MoveTowards(this.pos,this.target,this.speed));
       this.pathDistanceRemaining -= abs(prevPos.x - this.pos.x) + abs(prevPos.y - this.pos.y);
   
-      if(MoveTowards(this.pos,path,this.speed) == 0){
-        this.currentSpot++
+      if(MoveTowards(this.pos,this.target,this.speed) == 0){
+        this.finishedPath = true;
       }
       
     }
@@ -852,7 +772,7 @@ function Game(){
       this.cost = towerData.cost;
       
       this.allowToShoot = false;
-      this.damage = towerData.damage;
+      this.damage = towerData.damage * 2;
       this.range = towerData.range;
       
       this.hasFired = false;
@@ -867,7 +787,8 @@ function Game(){
       this.bulletDat = {
         name: towerData.bulletText,
         speed: 30,
-        color: color(towerData.bulCol[0],towerData.bulCol[1],towerData.bulCol[2])
+        color: color(towerData.bulCol[0],towerData.bulCol[1],towerData.bulCol[2]),
+        damage: this.damage
       }
     }
     
@@ -948,6 +869,7 @@ function Game(){
       this.speed = bulDat.speed / 10;
       this.name = bulDat.name;
       this.bulCol = bulDat.color;
+      this.size = bulDat.damage;
       
       this.pos = createVector(pos.x,pos.y);
       this.target = target;
@@ -959,10 +881,12 @@ function Game(){
   
       this.pos.add(MoveTowards(this.pos,this.target.pos,this.speed));
       push()
-      textSize(dynamicText(this.name,size));
+      //textSize(dynamicText(this.name,size));
       noStroke()
       fill(this.bulCol)
-      text(this.name,this.pos.x,this.pos.y)
+      ellipseMode(CENTER)
+      ellipse(this.pos.x,this.pos.y, 15 + this.size*3)
+      //text(this.name,this.pos.x,this.pos.y)
       pop()
   
       if(MoveTowards(this.pos,this.target.pos,this.speed) == 0) {
@@ -975,9 +899,11 @@ function Game(){
   
   class TileData {
   
-    constructor(tileColor,isRoad,isBuildable){
+    constructor(startPos,tileColor,isRoad,isBuildable){
   
-      this.pos = createVector(0,0)
+      this.pos = startPos
+      
+
       this.tileColor = tileColor;
       this.isRoad = isRoad; // Enemy moves here;
       this.isBuildable = isBuildable; // Buildings can be placed here;
@@ -1007,7 +933,13 @@ function Game(){
     BuildingRender(){
       this.Building.Render()
     }
-  
+    
+    UpdatePosition(newPos){
+      this.pos = newPos;
+      if(this.Building != null){
+        this.Building.pos = createVector(this.pos.x+size/2,this.pos.y+size/2);
+      }
+    }
   
   }
   
@@ -1041,16 +973,21 @@ function Instructions() {
           let enem = _itemLib.Enemies[i];
           push()
           fill(enem.objCol[0],enem.objCol[1],enem.objCol[2])
-          textSize(dynamicText(enem.name,150))
-          text(enem.name,width-200, pos+20 + pos*i,100)
+          //textSize(dynamicText(enem.name,150))
+          //text(enem.name,width-200, pos+20 + pos*i,100)
+          ellipseMode(CENTER)
+          ellipse(width-100,pos+20 + pos * i, 10 + enem.hp*3)
           pop()
         }
       pop()
       textSize(20)
       fill(255,255,100)
-      text("- Stop Error Codes from reaching the end", 60,150)
-      text("- each Function has different speeds and \"damage\"", 60,190)
-      text("- you work is completed once the last file's errors are gone", 60,230)
+      text("- Stop the Hacker dots from reaching the end", 60,150)
+      text("- Each defense piece have different attack speeds and damage", 60,190)
+      text("- New lines of attack spawn in as the threat level increases", 60,230)
+      text("- You have a limited number of placements so place your towers wisely", 60,270)
+      text("- Having a longer password with different letters and symbols gives you more health", 60,310)
+      text("- Once the last hacker dot is removed, your password shall be safe", 60,340)
       fill(150,150,255);
       textStyle(NORMAL)
       textSize(22) 
@@ -1097,19 +1034,13 @@ function FailedEnd() {
       textAlign(LEFT,LEFT)
       textStyle(BOLD)
       translate(0,30) // <<<<<<<<<<<<<<<<<< TRANSLATE
-      text("System Crash! ",20,20)
+      text("Hackers have Breached your Password!",20,20)
       text("-----------------------",20,70);
       fill("red")
       textSize(20)
-      text("System Error could not run code due to:",20,100)
+      text("Would you Like to retry with a new Password?",20,100)
       fill(255,100,100)
       textStyle(NORMAL)
-      // errorName = ["","","",""]
-      for(let i = 0; i < errorName.length; i++) {
-        // errorName[i] = _itemLib.Enemies[i].flavorTxt;
-        text(trim(errorName[i]),20,130 + i*30)
-
-      }
 
 
       push()
@@ -1126,50 +1057,51 @@ function FailedEnd() {
         imageMode(CENTER)
         image(errorIcon,0,0,150)
       pop()
-
       push()
+
         fill(150,150,255);
         textStyle(NORMAL)
         textSize(22) 
-        text("/Next/Page/Game_Play.exe",50,400)
+        let currentName = "Enter a New Password"
+        let lineW = textWidth(currentName);
+        text(currentName,50,400)
         stroke(150,150,255)
-        line(50,410,335,410)
+        line(50,410,50+lineW,410)
+        if(inButton(50,410,lineW,30)){
+          if(!mouseDown){
+            errorName = [];
+            sceneMan.showScene(Game)
+            if(playerPasswordInput != null) playerPasswordInput.show();
+            mouseDown = true;
+            if(!buttonSFX.isPlaying()){
+              buttonSFX.play()
+            }
+          }
+    
+        }
       pop()
       push()
         fill(150,150,255);
         textStyle(NORMAL)
-        textSize(22) 
-        text("/next/Project/StartPage.js.zip",50,440)
+        textSize(22)
+        currentName = "Return to menu"
+        lineW = textWidth(currentName); 
+        text(currentName,50,440)
         stroke(150,150,255)
-        line(50,450,335,450)
+        line(50,450,50+lineW,450)
+        if(inButton(50,450,lineW,30)){
+          if(!mouseDown){
+            errorName = [];
+            sceneMan.showScene(Intro)
+            mouseDown = true;
+            if(!buttonSFX.isPlaying()){
+              buttonSFX.play()
+            }
+          }
+    
+        }
       pop()
     pop()
-      if(inButton(50,410,285,30)){
-        if(!mouseDown){
-          errorName = [];
-          sceneMan.showScene(Game)
-          mouseDown = true;
-          if(!buttonSFX.isPlaying()){
-            buttonSFX.play()
-          }
-        }
-  
-      }
-      if(inButton(50,450,285,30)){
-        if(!mouseDown){
-          errorName = [];
-          sceneMan.showScene(Intro)
-          mouseDown = true;
-          if(!buttonSFX.isPlaying()){
-            buttonSFX.play()
-          }
-        }
-  
-      }
-      fill(200,100)
-      // rect(50,410,285,30)
-    // fill(255,150,150,50);
-    // rect(50,450,285,30)
 
   }
 }
@@ -1199,18 +1131,20 @@ function WinEnd(){
     text("Good Job!",40,60)
     text("-------------------------------",40,100)
     textSize(25);
-    text("All Errors have been fixed...",40,180)
+    text("All Hackers have been Repelled...",40,180)
     rectMode(CORNER,CENTER)
     fill(255,255,100)
-    text("We have more files for you to process so go take a victory lap and get back to work!",40,260,width/2)
+    text("Be wary, more people will come to breach your password whenever they can.",40,260,width/2)
+    text("Always make sure to keep your password protected and unique to other passwords.",40,300,width/2)
     
     fill(150,150,255);
     textStyle(NORMAL)
     textSize(22) 
-    text("/next/Project/StartPage.js.zip",50,400)
+    let current = "Return to Menu"
+    text(current,50,400)
     stroke(150,150,255)
-    line(50,410,335,410)
-    if(inButton(50,380,335-50,30)){
+    line(50,410,textWidth(current)+50,410)
+    if(inButton(50,380,textWidth(current),30)){
       if(!mouseDown){
         sceneMan.showScene(Intro)
         mouseDown = true;
@@ -1239,5 +1173,81 @@ function WinEnd(){
     image(repBG,0,0,200,height)
     image(repBG,0,-height,200,height) // creates an infinite loop
     pop()
+  }
+}
+
+function Statement() {
+
+
+  this.setup = function(){
+    canvasSize = createCanvas(window.innerWidth, window.innerHeight)
+
+    gameIsPlaying = false;
+  }
+
+  this.draw = function(){
+    push()
+      background(30,30,40);
+      fill(255)
+      textSize(50);
+      textAlign(LEFT,LEFT)
+      textStyle(BOLD)
+      translate(0,30) // <<<<<<<<<<<<<<<<<< TRANSLATE
+      text("Password Protector",20,20)
+      text("-----------------------",20,70);
+      fill(240,200,90 )
+      textSize(20)
+      text("By: Ben Beary",20,100)
+      fill(255,100,100)
+      textStyle(NORMAL)
+
+
+      
+      push()
+
+        fill(150,150,255);
+        textStyle(NORMAL)
+        textSize(22) 
+        let currentName = "Create a Password!"
+        let lineW = textWidth(currentName);
+        text(currentName,50,400)
+        stroke(150,150,255)
+        line(50,410,50+lineW,410)
+        if(inButton(50,410,lineW,30)){
+          if(!mouseDown){
+            errorName = [];
+            sceneMan.showScene(Game)
+            if(playerPasswordInput != null) playerPasswordInput.show();
+            mouseDown = true;
+            if(!buttonSFX.isPlaying()){
+              buttonSFX.play()
+            }
+          }
+    
+        }
+      pop()
+      push()
+        fill(150,150,255);
+        textStyle(NORMAL)
+        textSize(22)
+        currentName = "Return to menu"
+        lineW = textWidth(currentName); 
+        text(currentName,50,440)
+        stroke(150,150,255)
+        line(50,450,50+lineW,450)
+        if(inButton(50,450,lineW,30)){
+          if(!mouseDown){
+            errorName = [];
+            sceneMan.showScene(Intro)
+            mouseDown = true;
+            if(!buttonSFX.isPlaying()){
+              buttonSFX.play()
+            }
+          }
+    
+        }
+      pop()
+    pop()
+
   }
 }
