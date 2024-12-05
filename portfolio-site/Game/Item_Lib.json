@@ -63,7 +63,7 @@
 
         {
             "name": "Fire Wall",
-            "damage": 1,
+            "damage": 2,
             "range": 3,
             "shootSpeed": 1,
             "cost": 2,
@@ -83,7 +83,7 @@
         },
         {
             "name": "Login Alert",
-            "damage": 0.5,
+            "damage": 1,
             "range": 5,
             "shootSpeed": 0.5,
             "cost": 5,

@@ -671,10 +671,10 @@ function Game(){
       }
 
       let difficultyScale = waveData[i].delay - (Math.floor(threatLevel/5)/10);
-      if(difficultyScale >= 0.25) difficultyScale = 0.25
+      if(difficultyScale > 0.5) difficultyScale = 0.5
 
       if(dif >= difficultyScale && waveData[i].count[waveCur] > 0){
-        
+        // enemy spawning?
         let randPath = Math.floor(Math.random() * mapLinePoints.length) 
         currentEnemies.push(new enemy(mapLinePoints[randPath].startPos,mapLinePoints[randPath].endPos, _itemLib.Enemies[i]))
         waveData[i].count[waveCur]--;
@@ -827,10 +827,10 @@ function Game(){
       
       this.allowToShoot = false;
       this.damage = towerData.damage * 2;
-      this.range = towerData.range;
+      this.range = towerData.range / (basePathLength/pathLength);
       
       this.hasFired = false;
-      this.speed = towerData.shootSpeed*1000; // fireRate
+      this.speed = (towerData.shootSpeed*1000) / ((basePathLength/pathLength)/2); // fireRate
       this.bulletText = towerData.bulletText;
       this.showRange = true;
       this.bulletsInplay = [];
@@ -840,7 +840,7 @@ function Game(){
   
       this.bulletDat = {
         name: towerData.bulletText,
-        speed: 30,
+        speed: 30 / (basePathLength/pathLength) + this.damage*2,
         color: color(towerData.bulCol[0],towerData.bulCol[1],towerData.bulCol[2]),
         damage: this.damage
       }
@@ -973,7 +973,7 @@ function Game(){
       fill(this.tileColor)
       rect(this.pos.x,this.pos.y,size,size)
       pop()
-      if(this.isBuildable && selectedTower != null && this.Building == null && inButton(this.pos.x,this.pos.y,size,size)){
+      if(this.isBuildable && selectedTower != null && inButton(this.pos.x,this.pos.y,size,size)){
         this.Building = selectedTower
         Currency -= this.Building.cost;
         this.Building.allowToShoot = true;
@@ -982,6 +982,7 @@ function Game(){
         currentTowers.push(this);
         selectedTower = null;
       }
+      
     }
   
     BuildingRender(){
