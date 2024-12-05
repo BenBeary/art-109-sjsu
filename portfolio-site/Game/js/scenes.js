@@ -17,6 +17,9 @@ let errorTags = [];
 let PasswordStrength = 0; // base health;
 let minHealth = 4;
 let healthcounter = 5;
+let newGamePlus = true;
+
+
 //#region Window Resizing
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize(){
@@ -502,7 +505,9 @@ function Game(){
     let itemSize = 140;
     let padding = 10;
     let maxAmountItemsOnScreen = Math.floor((height-TopSection-50) / (itemSize+padding))
-    
+    let newGameTowersAmount = 0;
+    if(newGamePlus == true) newGameTowersAmount = _itemLib.NewGameTowers.length
+
     for(let i = 0; i < _itemLib.Towers.length; i++){
       if(_itemLib.Towers.length > 3){ // only use this if we have more than 3 items
         // hide stuff outside shop
@@ -513,30 +518,56 @@ function Game(){
   
       }
       push()
-      if(playerPassword.length > 0 && inButton(width-ShopSection+20,TopSection+30+(itemSize+padding)*i - shopScrollBar.getValue(),itemSize,itemSize)){
-        if(!mouseDown && _itemLib.Towers[i].cost <= Currency){
-          // add functions here
-          console.log("Bought Tower");
-          selectedTower = new tower(_itemLib.Towers[i]);
+        if(playerPassword.length > 0 && inButton(width-ShopSection+20,TopSection+30+(itemSize+padding)*i - shopScrollBar.getValue(),itemSize,itemSize)){
+          if(!mouseDown && _itemLib.Towers[i].cost <= Currency){
+            // add functions here
+            console.log("Bought Tower");
+            selectedTower = new tower(_itemLib.Towers[i]);
+          }
+          fill(90,90,95)
         }
-        fill(90,90,95)
-      }
-      rect(0,(itemSize+padding)*i - shopScrollBar.getValue(),itemSize)
-      fill(200)
-      rectMode(CENTER)
-      textSize(dynamicText(_itemLib.Towers[i].name,itemSize-40))
-      // textSize(20)
-      let temp = color(_itemLib.Towers[i].objCol[0],_itemLib.Towers[i].objCol[1],_itemLib.Towers[i].objCol[2])
-      fill(temp)
-      text(_itemLib.Towers[i].name,itemSize/2,(itemSize+padding)*i+itemSize/2 - shopScrollBar.getValue(),itemSize-40)
-      
-      textSize(20)
-      fill(240,200,90)
-      text("Cost: " + _itemLib.Towers[i].cost,itemSize/2,(itemSize+padding)*i+itemSize-15 - shopScrollBar.getValue())
+        rect(0,(itemSize+padding)*i - shopScrollBar.getValue(),itemSize)
+        fill(200)
+        rectMode(CENTER)
+        textSize(dynamicText(_itemLib.Towers[i].name,itemSize-40))
+        // textSize(20)
+        let temp = color(_itemLib.Towers[i].objCol[0],_itemLib.Towers[i].objCol[1],_itemLib.Towers[i].objCol[2])
+        fill(temp)
+        text(_itemLib.Towers[i].name,itemSize/2,(itemSize+padding)*i+itemSize/2 - shopScrollBar.getValue(),itemSize-40)
+        
+        textSize(20)
+        fill(240,200,90)
+        text("Cost: " + _itemLib.Towers[i].cost,itemSize/2,(itemSize+padding)*i+itemSize-15 - shopScrollBar.getValue())
       pop()
     }
-    if(_itemLib.Towers.length > maxAmountItemsOnScreen){
-      shopScrollBar.reduceSize = ((_itemLib.Towers.length-maxAmountItemsOnScreen)*itemSize+padding*(_itemLib.Towers.length- maxAmountItemsOnScreen))
+    if(newGamePlus == true){
+      for(let j = 0; j < _itemLib.NewGameTowers.length; j++){
+        push()
+          if(playerPassword.length > 0 && inButton(width-ShopSection+20,TopSection+30+(itemSize+padding)*(_itemLib.Towers.length+j) - shopScrollBar.getValue(),itemSize,itemSize)){
+            if(!mouseDown && _itemLib.NewGameTowers[j].cost <= Currency){
+              // add functions here
+              console.log("Bought Tower");
+              selectedTower = new tower(_itemLib.NewGameTowers[j]);
+            }
+            fill(90,90,95)
+          }
+          rect(0,(itemSize+padding)*(_itemLib.Towers.length+j) - shopScrollBar.getValue(),itemSize)
+          fill(200)
+          rectMode(CENTER)
+          textSize(dynamicText(_itemLib.NewGameTowers[j].name,itemSize-40))
+          // textSize(20)
+          let temp = color(_itemLib.NewGameTowers[j].objCol[0],_itemLib.NewGameTowers[j].objCol[1],_itemLib.NewGameTowers[j].objCol[2])
+          fill(temp)
+          text(_itemLib.NewGameTowers[j].name,itemSize/2,(itemSize+padding)*(_itemLib.Towers.length+j)+itemSize/2 - shopScrollBar.getValue(),itemSize-40)
+          
+          textSize(20)
+          fill(240,200,90)
+          text("Cost: " + _itemLib.NewGameTowers[j].cost,itemSize/2,(itemSize+padding)*(_itemLib.Towers.length+j)+itemSize-15 - shopScrollBar.getValue())
+        pop()
+      }
+    }        
+    if(_itemLib.Towers.length + newGameTowersAmount > maxAmountItemsOnScreen){
+      shopScrollBar.reduceSize = (((_itemLib.Towers.length+newGameTowersAmount)-maxAmountItemsOnScreen)*itemSize+padding*((_itemLib.Towers.length+newGameTowersAmount)- maxAmountItemsOnScreen))
       // console.log(shopScrollBar.reduceSize)
     }
     else { shopScrollBar.reduceSize = 0;}
@@ -604,6 +635,7 @@ function Game(){
       case waveData[0].count.length:
         console.log("waves Complete");
         sceneMan.showScene(WinEnd);
+        newGamePlus = true;
         gameIsPlaying = false;
         ResetScene();
         winSFX.play();
@@ -670,6 +702,8 @@ function Game(){
     for(let i = 0; i < _itemLib.WaveDat.length; i++){
       waveData.push({... JSON.parse(JSON.stringify(_itemLib.WaveDat[i]))});
     }
+
+
   }
   
 

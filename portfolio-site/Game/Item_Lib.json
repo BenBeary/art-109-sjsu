@@ -27,32 +27,32 @@
     "Enemies": [
         
         { 
-            "name": "un- defined",
+            "name": "Not Used",
             "hp": 4,
             "speed": 15,
             "objCol": [ 250, 120, 100],
-            "flavorTxt": "Uncaught TypeError: Cannot read property \"obj\" of undefined"
+            "flavorTxt": "Not Used"
         },
         { 
-            "name": "out of bounds",
+            "name": "Not Used",
             "hp": 3,
             "speed": 20,
             "objCol": [ 250, 50, 50],
-            "flavorTxt": "Uncaught (in promise) RuneTimeError: index out of bounds"
+            "flavorTxt": "Not Used"
         },
         { 
-            "name": "Missing 404",
+            "name": "Not Used",
             "hp": 6,
             "speed": 10,
             "objCol": [ 230, 190, 70],
-            "flavorTxt": "NetworkError: 404 Not Found - http://ww.coolGifs.com/magic/fireball/fireball_01_2.gif/"
+            "flavorTxt": "Not Used"
         },
         { 
-            "name": "Syntax",
+            "name": "Not Used",
             "hp": 15,
             "speed": 5,
             "objCol": [ 250, 100, 250],
-            "flavorTxt": "Uncaught SyntaxError: Unexpected end of input"
+            "flavorTxt": "Not Used"
         }
     
     
@@ -100,7 +100,11 @@
             "bulletText": "()=>Err",
             "objCol": [ 120, 200, 250 ],
             "bulCol": [ 200, 200, 150 ]
-        },
+        }
+
+    ],
+    "NewGameTowers": [
+
         {
             "name": "Cat",
             "damage": 3,
@@ -110,8 +114,17 @@
             "bulletText": "mew",
             "objCol": [ 100, 255, 100 ],
             "bulCol": [ 250, 100, 250 ]
+        },
+        {
+            "name": "Dog",
+            "damage": 2,
+            "range": 6,
+            "shootSpeed": 0.5,
+            "cost": 4,
+            "bulletText": "woof",
+            "objCol": [ 255, 255, 100 ],
+            "bulCol": [ 180, 180, 250 ]
         }
     ]
-
 
 }
