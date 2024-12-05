@@ -6,7 +6,7 @@ let mouseDown = false;
 let lastMousePos;
 let errorName = [];
 let screenSizeChange = false;
-let canvasSize;
+
 
 // Game Variables 
 
@@ -20,7 +20,7 @@ let healthcounter = 5;
 //#region Window Resizing
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize(){
-    canvasSize = resizeCanvas(window.innerWidth, window.innerHeight);
+    resizeCanvas(window.innerWidth, window.innerHeight);
     console.log("Canvas Resized");
     screenSizeChange = true;
 }
@@ -264,7 +264,7 @@ function Game(){
     gameIsPlaying = true;
     playerPassword = "";
 
-    canvasSize = createCanvas(window.innerWidth,window.innerHeight)
+    createCanvas(window.innerWidth,window.innerHeight)
     textAlign(CENTER, CENTER);
     ellipseMode(CENTER)
     textSize(14)
@@ -567,6 +567,7 @@ function Game(){
           ResetScene();
           loseSFX.play()
           sceneMan.showScene(FailedEnd);
+          gameIsPlaying = false;
         }
         currentEnemies.splice(row,1)
       }
@@ -603,6 +604,7 @@ function Game(){
       case waveData[0].count.length:
         console.log("waves Complete");
         sceneMan.showScene(WinEnd);
+        gameIsPlaying = false;
         ResetScene();
         winSFX.play();
         return;
@@ -650,7 +652,7 @@ function Game(){
     currentTowers = []; // towers in play
     selectedTower = null; // trying to build
     gameStart = false 
-    
+    gameIsPlaying = true;
     Currency = 10; // Buying towers
     waveMax = 5; // Waves Left Obv
     waveCur = -1;
@@ -950,7 +952,7 @@ function Game(){
 
 function Instructions() {
   this.setup = function(){
-    canvasSize = createCanvas(window.innerWidth, window.innerHeight)
+    createCanvas(window.innerWidth, window.innerHeight)
     gameIsPlaying = false;
 
   }
@@ -1019,7 +1021,7 @@ function FailedEnd() {
   let dir;
 
   this.setup = function(){
-    canvasSize = createCanvas(window.innerWidth, window.innerHeight)
+    createCanvas(window.innerWidth, window.innerHeight)
     iconPos = createVector(width-200, height-250)
     target1 = createVector(width-200, 25)
     target2 = createVector(width-200, height-250)
@@ -1115,7 +1117,7 @@ function WinEnd(){
   let counter = 0;
 
   this.setup = function(){
-    canvasSize = createCanvas(window.innerWidth, window.innerHeight)
+    createCanvas(window.innerWidth, window.innerHeight)
     iconPos = createVector(width-200,0)
     target1 = createVector(width-200,0)
     target2 = createVector(width-200,height)
@@ -1180,7 +1182,7 @@ function Statement() {
 
 
   this.setup = function(){
-    canvasSize = createCanvas(window.innerWidth, window.innerHeight)
+    createCanvas(window.innerWidth, window.innerHeight)
 
     gameIsPlaying = false;
   }
