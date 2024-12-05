@@ -17,7 +17,7 @@ let errorTags = [];
 let PasswordStrength = 0; // base health;
 let minHealth = 4;
 let healthcounter = 5;
-let newGamePlus = true;
+let newGamePlus = false;
 
 
 //#region Window Resizing
@@ -147,6 +147,12 @@ function Intro() {
         text(currentName,width/2,450)
         stroke(150,150,255)
         line(width/2-lineW,460,width/2+lineW,460)
+        noStroke()
+        currentName = "Statement"
+        lineW = textWidth(currentName)/2;
+        text(currentName,width/2,500)
+        stroke(150,150,255)
+        line(width/2-lineW,510,width/2+lineW,510)
       pop()
 
       currentName = "Play Game"
@@ -154,6 +160,7 @@ function Intro() {
       if(inButton(width/2-lineW,330,lineW*2,30)){ // GAME BUTTON
         if(!mouseDown){
           sceneMan.showScene(Game);
+          gameIsPlaying = true;
           if(playerPasswordInput != null) playerPasswordInput.show();
           mouseDown = true;
           if(!buttonSFX.isPlaying()){
@@ -166,6 +173,17 @@ function Intro() {
       if(inButton(width/2-lineW,380,lineW*2,30)){
         if(!mouseDown){
           sceneMan.showScene(Instructions)
+          mouseDown = true;
+          if(!buttonSFX.isPlaying()){
+            buttonSFX.play()
+          }
+        }
+      }
+      currentName = "Statement"
+      lineW = textWidth(currentName)/2;
+      if(inButton(width/2-lineW,430,lineW*2,30)){
+        if(!mouseDown){
+          sceneMan.showScene(Statement)
           mouseDown = true;
           if(!buttonSFX.isPlaying()){
             buttonSFX.play()
@@ -211,7 +229,7 @@ function Game(){
 
   //#region VARIABLES
   let pathLength = 0;
-  
+  let basePathLength = 1000;
   
   let gameArea = createVector(width - ShopSection, height - TopSection)
 
@@ -733,7 +751,7 @@ function Game(){
       }
 
       let length = this.endPos.y - this.startPos.y 
-      let towerDistances = length / this.tileData.length
+      let towerDistances = (length-size) / this.tileData.length
 
       for(let i = 0; i < this.tileData.length; i++){
         this.tileData[i].UpdatePosition(createVector(this.startPos.x - size - 10, towerDistances * i + size+10));
@@ -744,7 +762,7 @@ function Game(){
       this.startPos = newPos
       this.endPos = createVector(this.startPos.x,this.startPos.y + length)
 
-      let towerDistances = length / this.tileData.length
+      let towerDistances = (length-size) / this.tileData.length
 
       for(let i = 0; i < this.tileData.length; i++){
         this.tileData[i].UpdatePosition(createVector(this.startPos.x - size - 10, towerDistances * i + size+10));
@@ -759,7 +777,7 @@ function Game(){
       this.pos = createVector(startPos.x,startPos.y);
       this.target = createVector(pathEnd.x,pathEnd.y);
       this.health = EnemyDat.hp;
-      this.speed = EnemyDat.speed / 10;
+      this.speed = (EnemyDat.speed / 10) / (basePathLength/pathLength);
       this.color = color(EnemyDat.objCol[0],EnemyDat.objCol[1],EnemyDat.objCol[2]);
       this.maxHealth = this.health;
     
@@ -1023,7 +1041,7 @@ function Instructions() {
       text("- New lines of attack spawn in as the threat level increases", 60,230)
       text("- You have a limited number of placements so place your towers wisely", 60,270)
       text("- Having a longer password with different letters and symbols gives you more health", 60,310)
-      text("- Once the last hacker dot is removed, your password shall be safe", 60,340)
+      text("- Once the last hacker dot is removed, your password shall be safe", 60,350)
       fill(150,150,255);
       textStyle(NORMAL)
       textSize(22) 
@@ -1107,6 +1125,7 @@ function FailedEnd() {
           if(!mouseDown){
             errorName = [];
             sceneMan.showScene(Game)
+            gameIsPlaying = true;
             if(playerPasswordInput != null) playerPasswordInput.show();
             mouseDown = true;
             if(!buttonSFX.isPlaying()){
@@ -1171,7 +1190,7 @@ function WinEnd(){
     rectMode(CORNER,CENTER)
     fill(255,255,100)
     text("Be wary, more people will come to breach your password whenever they can.",40,260,width/2)
-    text("Always make sure to keep your password protected and unique to other passwords.",40,300,width/2)
+    text("Always make sure to keep your password protected and unique to other passwords.",40,330,width/2)
     
     fill(150,150,255);
     textStyle(NORMAL)
@@ -1183,6 +1202,21 @@ function WinEnd(){
     if(inButton(50,380,textWidth(current),30)){
       if(!mouseDown){
         sceneMan.showScene(Intro)
+        mouseDown = true;
+        if(!buttonSFX.isPlaying()){
+          buttonSFX.play()
+        }
+      }
+
+    }
+    current = "Statement"
+    noStroke();
+    text(current,50,440)
+    stroke(150,150,255)
+    line(50,450,textWidth(current)+50,450)
+    if(inButton(50,420,textWidth(current),30)){
+      if(!mouseDown){
+        sceneMan.showScene(Statement)
         mouseDown = true;
         if(!buttonSFX.isPlaying()){
           buttonSFX.play()
@@ -1214,6 +1248,8 @@ function WinEnd(){
 
 function Statement() {
 
+  let extraWidth = 0;
+  let widthChanged = false;
 
   this.setup = function(){
     createCanvas(window.innerWidth, window.innerHeight)
@@ -1222,6 +1258,10 @@ function Statement() {
   }
 
   this.draw = function(){
+    if(screenSizeChange){
+      screenSizeChange = false;
+      widthChanged = false;
+    }
     push()
       background(30,30,40);
       fill(255)
@@ -1229,7 +1269,7 @@ function Statement() {
       textAlign(LEFT,LEFT)
       textStyle(BOLD)
       translate(0,30) // <<<<<<<<<<<<<<<<<< TRANSLATE
-      text("Password Protector",20,20)
+      text("Statement",20,20)
       text("-----------------------",20,70);
       fill(240,200,90 )
       textSize(20)
@@ -1243,14 +1283,25 @@ function Statement() {
       textAlign(TOP, CENTER)
       textSize(20)
       let currentParagraph = "With new forms of artificial intelligence and password-cracking robots, it's become harder and harder to hold on to a secure password that would last all your life. There are around 30% of people on the internet that have at some point been breached due to a weak password. This is why for my project, I wanted to show off the power of having a strong password while also having strong protections to help further secure your passwords and data in the form of a game."
-      text(currentParagraph, width/2, 100, width/3)
+      text(currentParagraph, width/2, 100, (width/3+extraWidth))
       
-      let lines = ((textWidth(currentParagraph)*20*2) / (width/3)) + 75
+      let lines = ((textWidth(currentParagraph)*20*2) / (width/3+extraWidth)) + 75
       currentParagraph = "The goal behind this project was to gamify the \“behind-the-scenes\” on how many people try to hack into your password and how certain applications can handle defending it. As the game progresses further, more lines of attack open up to represent the multiple accounts that are linked to that single password. This is mainly used to represent the statistic that two-thirds of Americans use the same password across multiple accounts. Finally, the strength of the password created by the player directly affects the difficulty of the password with longer passwords with different symbols and numbers increasing the overall health the player has to work with."
-      text(currentParagraph,width/2, lines, width/3)  	
+      text(currentParagraph,width/2, lines, (width/3+extraWidth))  	
       
-      lines += ((textWidth(currentParagraph)*20) / (width/3)) + 50
-      text("The entire website is built with p5 play JavaScript just to make it \“easier\” to code. To make the process easier to improve on, the enemies, towers, and wave spawner use a JSON file to store their data. This mainly allowed me to quickly add new units and towers to the game without needing to rework different systems in the game.",width/2, lines, width/3)
+      lines += ((textWidth(currentParagraph)*20) / (width/3+extraWidth)) + 50
+      currentParagraph = "The entire website is built with p5 play JavaScript just to make it \“easier\” to code. To make the process easier to improve on, the enemies, towers, and wave spawner use a JSON file to store their data. This mainly allowed me to quickly add new units and towers to the game without needing to rework different systems in the game."
+      text(currentParagraph,width/2, lines, (width/3+extraWidth))
+      lines += ((textWidth(currentParagraph)*20) / (width/3+extraWidth))
+
+      if(!widthChanged && lines > height){
+        extraWidth = (lines - height)
+        widthChanged = true;
+      }
+      else if(!widthChanged && lines < height){
+        extraWidth = 0
+        widthChanged = true;
+      }
 
       pop()
 
@@ -1269,6 +1320,7 @@ function Statement() {
           if(!mouseDown){
             errorName = [];
             sceneMan.showScene(Game)
+            gameIsPlaying = true;
             if(playerPasswordInput != null) playerPasswordInput.show();
             mouseDown = true;
             if(!buttonSFX.isPlaying()){
