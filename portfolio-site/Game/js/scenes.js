@@ -273,7 +273,7 @@ function Game(){
     
     //#region Password Creator Setup #####################
 
-    playerPasswordInput = createInput("Set Password Here");
+    playerPasswordInput = createInput("TEST");
     playerPasswordInput.position(width/2 - playerPasswordInput.width/2,height/2-75);
     playerPasswordInput.style("width",300);
     playerPasswordInput.style("height",30)
@@ -282,7 +282,7 @@ function Game(){
     playerPasswordInput.style("background-color", color(15,15,20 ))
     playerPasswordInput.style("outline-style", "solid")
     playerPasswordInput.style("outline-color", color(50,50,60 ))
-
+    playerPasswordInput.style("text-align", "center")
     //#endregion
 
     updateWindow();
@@ -402,6 +402,7 @@ function Game(){
       for(let i = 0; i < errorTags.length; i++){
         textSize(dynamicText("Set your Password to Begin",playerPasswordInput.width)) // shit doesnt carry over to for loops rip
         fill(240,200,90)
+        if(i > 0) fill(255,120,120)
         text(errorTags[i],width/2, height/2 - playerPasswordInput.width/2 + 125 + spaceBetween)
         spaceBetween += 25 + padding;
       }
@@ -410,7 +411,56 @@ function Game(){
 
   function drawNewGameShit(){
       let gameArea = createVector(width - ShopSection, height - TopSection)
+
+      drawPasswordBoxes();
   }
+
+
+  function drawPasswordBoxes(){
+    let gameArea = createVector(width - ShopSection, height - TopSection)
+    
+    let padding = 10;
+    let boxSize = 150 
+
+    push()
+      fill(25,25,35)
+      rect(20,gameArea.y - boxSize, gameArea.x - 40, boxSize)
+      fill(15,15,20)
+      rect(20+10,gameArea.y - boxSize+10, gameArea.x - 40-20, boxSize - 20)
+      
+      fill(240,200,90)
+      textSize(dynamicText("%%",boxSize))
+      
+      // Change size to fit if bigger than box container
+      if(textWidth(playerPassword) > gameArea.x - 70){
+        textSize(dynamicText(playerPassword, gameArea.x - 70))
+      }
+      
+      text(playerPassword, gameArea.x/2,gameArea.y - boxSize/2 + 10)
+    pop()
+    
+    // for (let i = 0; i < 6; i++){
+      
+    //   fill(25,25,35);
+    //   rect(20  + (boxSize+padding)*i, gameArea.y - 20 - boxSize, boxSize);
+    //   fill(15,15,20)
+    //   rect(20  + (boxSize+padding)*i + 10, gameArea.y - 20 - boxSize + 10, boxSize-20);
+    //   fill(240,200,90)
+    //   let currentText = null;
+    //   // 0 * 2 = 0 || 1 * 2 = 2 || 2 * 2 = 4 || 3 * 2 = 6
+    //   if(i*2 >= playerPassword.length) continue;
+    //   else if(i*2+1 >= playerPassword.length){
+    //     currentText = playerPassword.charAt(i*2)
+    //   }
+    //   else {
+    //     currentText = playerPassword.charAt(i*2) + playerPassword.charAt(i*2+1)
+    //   }
+    //   textSize(dynamicText("&&",boxSize-40))
+    //   text(currentText,20  + (boxSize+padding)*i + boxSize/2, gameArea.y - 20 - boxSize + boxSize/2 + 10)
+    // }
+
+  }
+
 
 
   function drawTopPanel(){
@@ -442,7 +492,8 @@ function Game(){
       pop()
     }
 
-    text("Lines Left: " + Currency,10,0)
+    text("Money: " + Currency,10,0)
+    text("Health: " + healthcounter, 30 + textWidth("Money: 0000"), 0)
     textAlign(CENTER,CENTER)
     text("File: " + (waveCur+1) + "/" + waveMax,width/2,0)
     text("Shop",width-100,0)

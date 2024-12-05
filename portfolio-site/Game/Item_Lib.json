@@ -62,7 +62,7 @@
     "Towers": [
 
         {
-            "name": "Debug Log",
+            "name": "Fire Wall",
             "damage": 1,
             "range": 3,
             "shootSpeed": 1,
@@ -72,7 +72,7 @@
             "bulCol": [ 250, 190, 100 ]
         },
         {
-            "name": "if check",
+            "name": "VPN",
             "damage": 3,
             "range": 5,
             "shootSpeed": 2,
@@ -82,7 +82,7 @@
             "bulCol": [ 200, 90, 90 ]
         },
         {
-            "name": "For Loop",
+            "name": "Login Alert",
             "damage": 0.5,
             "range": 5,
             "shootSpeed": 0.5,
@@ -92,7 +92,7 @@
             "bulCol": [ 120, 120, 230 ]
         },
         {
-            "name": "Function",
+            "name": "2 Factor Auth",
             "damage": 5,
             "range": 9,
             "shootSpeed": 3,
