@@ -141,7 +141,8 @@ function Intro() {
       textAlign(CENTER,CENTER);
       textStyle(BOLD)
       text("Password Protector", width/2,200)
-
+      textSize(40)
+      if(newGamePlus) text("New Game+", width/2, 275)
       fill(150,150,255);
       textStyle(NORMAL)
       textSize(22)
@@ -306,7 +307,8 @@ function Game(){
     
     //#region Password Creator Setup #####################
 
-    playerPasswordInput = createInput("Set Password Here");
+    playerPasswordInput = createInput();
+    playerPasswordInput.attribute("placeholder", "Set Password Here")
     playerPasswordInput.position(width/2 - playerPasswordInput.width/2,height/2-75);
     playerPasswordInput.style("width",300);
     playerPasswordInput.style("height",30)
@@ -1049,7 +1051,7 @@ function Instructions() {
       textSize(20)
       fill(255,255,100)
       text("- Stop the Hacker dots from reaching the end", 60,150)
-      text("- Each defense piece have different attack speeds and damage", 60,190)
+      text("- Each defense piece has different attack speeds and damage", 60,190)
       text("- New lines of attack spawn in as the threat level increases", 60,230)
       text("- You have a limited number of placements so place your towers wisely", 60,270)
       text("- Having a longer password with different letters and symbols gives you more health", 60,310)
