@@ -47,9 +47,14 @@ function keyPressed(){
 function PasswordChecker(item){
   //#region Error Stoppers
   errorTags = [];
-  let badChars = ",.<>/:;'\"[]}{=+()\\|"
-  let goodChars = "-_`~!@#$%^&*"
-  
+  const badChars = ",.<>/:;'\"[]}{=+()\\|"
+  const goodChars = "-_`~!@#$%^&*"
+  // List of commonly used patterns to check
+  const commonPatterns = [
+    '1234', '12345', '123456', '1234567', '12345678', '123456789', 
+    'qwerty', 'asdf', 'password', 'abc', '1111', 'admin', 'letmein', 'welcome'
+];
+
   if(item.length < 4){
     errorTags.push("Password too short")
   }
@@ -62,12 +67,18 @@ function PasswordChecker(item){
   }
   
   
+  
   //#endregion
   
   //#region health System
   PasswordStrength = 0
   let repeatingChars = 0;
-
+  for (let pattern of commonPatterns) {
+    if (item.includes(pattern)) {
+        
+        PasswordStrength -= pattern.length - 1; // Deduct points if a common pattern is found
+    }
+  }
   for(let i = 0; i < item.length; i++){
 
     // check if same letters
